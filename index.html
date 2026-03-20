@@ -1,195 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14324a" />
+  <title>KapsVision Client Register</title>
 
-<title>KapsVision Client Register</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #efe8dc;
+      color: #24384a;
+    }
 
-<!-- PWA + iOS -->
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="logo.png">
-<meta name="theme-color" content="#14324a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    .header {
+      background: #10283f;
+      color: #fff;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:Segoe UI;
-  background:#efe8dc;
-  padding:15px;
-  padding-bottom:env(safe-area-inset-bottom);
-}
+    .header img {
+      width: 60px;
+    }
 
-/* iOS zoom fix */
-input,textarea,select{
-  font-size:16px;
-}
+    .container {
+      padding: 15px;
+    }
 
-h2{
-  margin:0 0 10px;
-}
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-family: inherit;
+    }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:8px;
-  border:1px solid #ccc;
-}
+    textarea {
+      min-height: 80px;
+    }
 
-button{
-  margin-top:10px;
-  padding:10px;
-  border:none;
-  border-radius:20px;
-  background:#1f6f9a;
-  color:#fff;
-  font-weight:bold;
-}
+    button {
+      margin-top: 10px;
+      padding: 10px;
+      border: none;
+      border-radius: 20px;
+      background: #1f6f9a;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+    }
 
-button:hover{
-  opacity:.9;
-}
+    .delete {
+      background: #cf5b49;
+    }
 
-.delete{
-  background:#cf5b49;
-}
-
-.card{
-  background:#fff;
-  padding:10px;
-  margin-top:10px;
-  border-radius:10px;
-}
-</style>
+    .card {
+      background: #fff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 
 <body>
 
-<h2>KapsVision</h2>
+  <div class="header">
+    <img src="logo.png" alt="logo">
+    <h2>KapsVision</h2>
+  </div>
 
-<input id="name" placeholder="Client Name">
-<input id="phone" placeholder="Contact Number">
-<input id="state" placeholder="State">
-<input id="city" placeholder="City">
-<textarea id="address" placeholder="Address"></textarea>
-<input id="pin" placeholder="Pin Code">
+  <div class="container">
 
-<button onclick="save()">Save</button>
-<button onclick="exportData()">Export</button>
-<button onclick="document.getElementById('file').click()">Import</button>
-<input type="file" id="file" hidden>
+    <input id="clientName" placeholder="Client Name">
+    <input id="contactNumber" placeholder="Contact Number">
+    <input id="state" placeholder="State">
+    <input id="city" placeholder="City">
+    <textarea id="address" placeholder="Address"></textarea>
+    <input id="pinCode" placeholder="Pin Code">
 
-<div id="list"></div>
+    <button onclick="saveClient()">Save Client</button>
 
-<script>
-const STORAGE="kaps.clients";
-let records = JSON.parse(localStorage.getItem(STORAGE)) || [];
+    <div id="clientList"></div>
 
-/* SAVE */
-function save(){
-  let data={
-    id:Date.now(),
-    name:name.value.trim(),
-    phone:phone.value.trim(),
-    state:state.value.trim(),
-    city:city.value.trim(),
-    address:address.value.trim(),
-    pin:pin.value.trim()
-  };
+  </div>
 
-  if(data.name.length<3){
-    alert("Enter valid name");
-    return;
-  }
+  <script>
+    let records = JSON.parse(localStorage.getItem("kapsvision.clients")) || [];
 
-  if(!/^[0-9]{10}$/.test(data.phone)){
-    alert("Enter valid 10-digit number");
-    return;
-  }
+    function saveClient() {
+      const client = {
+        id: Date.now(),
+        name: document.getElementById("clientName").value.trim(),
+        phone: document.getElementById("contactNumber").value.trim(),
+        state: document.getElementById("state").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        address: document.getElementById("address").value.trim(),
+        pin: document.getElementById("pinCode").value.trim()
+      };
 
-  if(!/^[0-9]{6}$/.test(data.pin)){
-    alert("Enter valid PIN");
-    return;
-  }
+      if (!client.name || !client.phone) {
+        alert("Please enter required details");
+        return;
+      }
 
-  records.unshift(data);
-  localStorage.setItem(STORAGE, JSON.stringify(records));
-  clearForm();
-  render();
-}
+      records.unshift(client);
+      localStorage.setItem("kapsvision.clients", JSON.stringify(records));
 
-/* RENDER */
-function render(){
-  list.innerHTML = records.map(r=>`
-    <div class="card">
-      <b>${r.name}</b><br>
-      ${r.phone}<br>
-      ${r.city}, ${r.state}<br>
-      ${r.address}<br>
-      ${r.pin}<br><br>
-      <button onclick="edit(${r.id})">Edit</button>
-      <button class="delete" onclick="del(${r.id})">Delete</button>
-    </div>
-  `).join("");
-}
+      clearForm();
+      renderClients();
+    }
 
-/* DELETE */
-function del(id){
-  records = records.filter(r=>r.id!==id);
-  localStorage.setItem(STORAGE, JSON.stringify(records));
-  render();
-}
+    function renderClients() {
+      const container = document.getElementById("clientList");
 
-/* EDIT */
-function edit(id){
-  let r = records.find(x=>x.id===id);
-  if(!r) return;
+      if (!records.length) {
+        container.innerHTML = "<p>No clients saved.</p>";
+        return;
+      }
 
-  name.value=r.name;
-  phone.value=r.phone;
-  state.value=r.state;
-  city.value=r.city;
-  address.value=r.address;
-  pin.value=r.pin;
+      container.innerHTML = records.map(c => `
+        <div class="card">
+          <strong>${c.name}</strong><br>
+          ${c.phone}<br>
+          ${c.city}, ${c.state}<br>
+          ${c.address}<br>
+          ${c.pin}<br><br>
+          <button class="delete" onclick="deleteClient(${c.id})">Delete</button>
+        </div>
+      `).join("");
+    }
 
-  del(id);
-}
+    function deleteClient(id) {
+      records = records.filter(c => c.id !== id);
+      localStorage.setItem("kapsvision.clients", JSON.stringify(records));
+      renderClients();
+    }
 
-/* CLEAR */
-function clearForm(){
-  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
-}
+    function clearForm() {
+      document.getElementById("clientName").value = "";
+      document.getElementById("contactNumber").value = "";
+      document.getElementById("state").value = "";
+      document.getElementById("city").value = "";
+      document.getElementById("address").value = "";
+      document.getElementById("pinCode").value = "";
+    }
 
-/* EXPORT */
-function exportData(){
-  const blob=new Blob([JSON.stringify(records,null,2)],{type:"application/json"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="clients.json";
-  a.click();
-}
-
-/* IMPORT */
-file.onchange=function(){
-  const reader=new FileReader();
-  reader.onload=function(){
-    records=JSON.parse(reader.result);
-    localStorage.setItem(STORAGE, JSON.stringify(records));
-    render();
-  };
-  reader.readAsText(this.files[0]);
-}
-
-/* SERVICE WORKER */
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("sw.js");
-}
-
-render();
-</script>
+    renderClients();
+  </script>
 
 </body>
 </html>
