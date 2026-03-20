@@ -1,258 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
+  <meta charset="utf-8" />
 
-<!-- Mobile + iOS PWA -->
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14324a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="KapsVision">
+  <!-- iPhone optimized viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14324a" />
 
-<!-- iOS Icon -->
-<link rel="apple-touch-icon" href="logo-192.png">
+  <!-- iOS App Mode -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-<title>KapsVision Client Register</title>
+  <title>KapsVision Client Register</title>
 
-<style>
-:root{
-  --shell:#efe8dc;
-  --card:#fff;
-  --ink:#10283f;
-  --body:#24384a;
-  --muted:#6a7a89;
-  --blue:#1f6f9a;
-  --gold:#d9b15f;
-  --green:#4b8a2f;
-  --red:#cf5b49;
-}
+  <style>
+    :root {
+      --shell: #efe8dc;
+      --card: #ffffff;
+      --ink: #10283f;
+      --body: #24384a;
+      --muted: #6a7a89;
+      --soft: #f7fafc;
+      --line: #dbe4eb;
+      --blue: #1f6f9a;
+      --gold: #d9b15f;
+      --gold-deep: #b98522;
+      --green: #4b8a2f;
+      --red: #cf5b49;
+      --shadow: 0 10px 25px rgba(0,0,0,0.08);
+      --radius-lg: 18px;
+      --radius-sm: 10px;
+    }
 
-/* iOS Fixes */
-html,body{
-  margin:0;
-  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background:var(--shell);
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:env(safe-area-inset-bottom);
-  padding-top:env(safe-area-inset-top);
-}
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-/* Prevent zoom */
-input,select,textarea{
-  font-size:16px;
-}
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--shell);
+    }
 
-/* Remove iOS styles */
-button,input,textarea,select{
-  -webkit-appearance:none;
-  appearance:none;
-}
+    body {
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
 
-/* Tap fix */
-button{
-  -webkit-tap-highlight-color:transparent;
-}
+    /* iPhone stable height */
+    .app-shell {
+      min-height: 100svh;
+    }
 
-/* Layout */
-.header{
-  background:#10283f;
-  color:#fff;
-  padding:20px;
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
+    /* HEADER FIXED (no jump) */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(145deg, #0b1f33, #14324a);
+      color: #fff;
+      padding: 1rem;
+      border-bottom: 3px solid var(--gold);
+    }
 
-.header img{
-  width:70px;
-}
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-.title{
-  font-size:24px;
-  font-weight:bold;
-}
+    .logo-panel img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
 
-.content{
-  padding:15px;
-}
+    .title {
+      margin: 0;
+      font-size: 1.4rem;
+    }
 
-.card{
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  margin-bottom:15px;
-}
+    .content {
+      padding: 1rem;
+    }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  margin-top:5px;
-}
+    .summary-card,
+    .panel,
+    .table-panel {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      margin-top: 1rem;
+      box-shadow: var(--shadow);
+    }
 
-button{
-  background:var(--blue);
-  color:#fff;
-  padding:12px;
-  border-radius:25px;
-  margin-top:10px;
-  width:100%;
-}
+    .summary-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
 
-.delete{
-  background:var(--red);
-}
+    .summary-value {
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
 
-.record{
-  border-top:1px solid #eee;
-  padding:10px 0;
-}
-</style>
+    .form-area {
+      display: grid;
+      gap: 0.7rem;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid #ccc;
+      font-size: 16px; /* prevents zoom */
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    button {
+      padding: 0.8rem;
+      border-radius: 999px;
+      border: none;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .primary { background: var(--blue); }
+    .utility { background: #6c7a86; }
+    .clear { background: var(--red); }
+
+    .actions-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .record-card {
+      padding: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .record-name {
+      font-weight: bold;
+    }
+
+    .search-box input {
+      margin-top: 1rem;
+    }
+
+  </style>
 </head>
 
 <body>
+<div class="app-shell">
 
-<div class="header">
-  <img src="logo.png">
-  <div class="title">KapsVision</div>
-</div>
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo-panel">
+        <img src="logo.png" alt="logo">
+      </div>
+      <h1 class="title">KapsVision</h1>
+    </div>
+  </header>
 
-<div class="content">
+  <main class="content">
 
-<div class="card">
-<form id="form">
+    <!-- SUMMARY -->
+    <div class="summary-card">
+      <div class="summary-label">Total Clients</div>
+      <div class="summary-value" id="totalClients">0</div>
+    </div>
 
-<label>Client Name</label>
-<input id="name">
+    <!-- FORM -->
+    <div class="panel">
+      <form id="clientForm">
+        <div class="form-area">
+          <input id="clientName" placeholder="Client Name">
+          <input id="contactNumber" placeholder="Contact Number">
 
-<label>Contact</label>
-<input id="contact" type="tel">
+          <select id="state"></select>
+          <select id="city"></select>
 
-<label>State</label>
-<input id="state">
+          <textarea id="address" placeholder="Address"></textarea>
+          <input id="pinCode" placeholder="Pin Code">
+        </div>
 
-<label>City</label>
-<input id="city">
+        <div class="actions-row">
+          <button class="primary" type="submit">Save</button>
+          <button class="utility" type="button" id="clearFormBtn">Clear</button>
+          <button class="clear" type="button" id="clearAllBtn">Clear All</button>
+        </div>
+      </form>
+    </div>
 
-<label>Address</label>
-<textarea id="address"></textarea>
+    <!-- SEARCH -->
+    <div class="table-panel">
+      <input id="searchInput" placeholder="Search clients">
 
-<label>Pin Code</label>
-<input id="pin">
+      <div id="mobileList"></div>
+    </div>
 
-<button type="submit">Save Client</button>
-<button type="button" class="delete" onclick="clearAll()">Clear All</button>
-
-</form>
-</div>
-
-<div class="card">
-<input id="search" placeholder="Search clients...">
-<div id="list"></div>
-</div>
-
+  </main>
 </div>
 
 <script>
-const KEY="KapsVision.clients.web";
-let data=[];
+const STORAGE_KEY = "KapsVision.clients.web";
+let records = [];
 
-/* Load */
-function load(){
-  try{
-    let saved=localStorage.getItem(KEY);
+const form = document.getElementById("clientForm");
+const list = document.getElementById("mobileList");
+const total = document.getElementById("totalClients");
 
-    if(!saved){
-      data=[];
-      return;
-    }
-
-    data=JSON.parse(saved);
-
-    if(!Array.isArray(data)) data=[];
-  }catch{
-    data=[];
-  }
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
-/* Save */
-function save(){
-  localStorage.setItem(KEY,JSON.stringify(data));
+function load() {
+  records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 }
 
-/* Render */
-function render(){
-  let list=document.getElementById("list");
-  let q=document.getElementById("search").value.toLowerCase();
+function render() {
+  total.textContent = records.length;
 
-  list.innerHTML="";
-
-  data.filter(d=>{
-    return Object.values(d).join(" ").toLowerCase().includes(q);
-  }).forEach(d=>{
-    let div=document.createElement("div");
-    div.className="record";
-
-    div.innerHTML=`
-      <b>${d.name}</b><br>
-      ${d.contact}<br>
-      ${d.city}, ${d.state}<br>
-      ${d.address}<br>
-      ${d.pin}
-      <br><button class="delete" onclick="del('${d.id}')">Delete</button>
-    `;
-
-    list.appendChild(div);
-  });
+  list.innerHTML = records.map(r => `
+    <div class="record-card">
+      <div class="record-name">${r.clientName}</div>
+      <div>${r.contactNumber}</div>
+      <div>${r.city}, ${r.state}</div>
+      <button onclick="del('${r.id}')">Delete</button>
+    </div>
+  `).join("");
 }
 
-/* Add */
-document.getElementById("form").onsubmit=e=>{
+function del(id) {
+  records = records.filter(r => r.id !== id);
+  save();
+  render();
+}
+
+form.onsubmit = e => {
   e.preventDefault();
 
-  let obj={
-    id:Date.now(),
-    name:name.value,
-    contact:contact.value,
-    state:state.value,
-    city:city.value,
-    address:address.value,
-    pin:pin.value
+  const data = {
+    id: Date.now()+"",
+    clientName: clientName.value,
+    contactNumber: contactNumber.value,
+    state: state.value,
+    city: city.value,
+    address: address.value,
+    pinCode: pinCode.value
   };
 
-  if(Object.values(obj).some(v=>!v)){
-    alert("Fill all fields");
-    return;
-  }
+  if(Object.values(data).some(v => !v)) return alert("Fill all");
 
-  data.unshift(obj);
+  records.unshift(data);
   save();
   render();
-  e.target.reset();
+  form.reset();
 };
 
-/* Delete */
-function del(id){
-  data=data.filter(d=>d.id!=id);
+document.getElementById("clearAllBtn").onclick = () => {
+  records = [];
   save();
   render();
-}
+};
 
-/* Clear */
-function clearAll(){
-  if(confirm("Delete all?")){
-    data=[];
-    save();
-    render();
-  }
-}
-
-/* Search */
-search.oninput=render;
-
-/* Init */
 load();
 render();
 </script>
