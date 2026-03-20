@@ -1,11 +1,10 @@
 {
   "name": "KapsVision Client Register",
   "short_name": "KapsVision",
-  "start_url": "index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#efe8dc",
   "theme_color": "#14324a",
-  "orientation": "portrait",
   "icons": [
     {
       "src": "logo.png",
