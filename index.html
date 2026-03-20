@@ -1,225 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#14324a" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KapsVision CRM</title>
 
-  <!-- iOS PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="KapsVision">
-  <link rel="apple-touch-icon" href="logo.png">
+<style>
+body { font-family:Segoe UI; margin:0; background:#efe8dc; }
 
-  <title>KapsVision Client Register</title>
+/* GOLDEN BACKGROUND */
+@keyframes glow {
+  0%{opacity:.3}50%{opacity:1}100%{opacity:.3}
+}
+.bg::before{
+  content:"";
+  position:fixed;inset:0;
+  background:
+    radial-gradient(circle,#ffd700 1px,transparent 2px) 20px 20px/120px 120px;
+  animation:glow 4s infinite;
+}
 
-  <style>
-    :root {
-      --shell: #efe8dc;
-      --blue: #1f6f9a;
-      --shadow: 0 16px 34px rgba(20, 50, 74, 0.08);
-    }
+/* HEADER */
+.header{
+  background:#112e49;
+  color:#fff;
+  padding:12px;
+  text-align:center;
+}
 
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: var(--shell);
-    }
+/* LOGIN */
+.login{
+  max-width:300px;
+  margin:80px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:10px;
+}
 
-    /* ===== GOLDEN GLITTER STARS ===== */
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+}
 
-    @keyframes goldenTwinkle {
-      0% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.4) rotate(20deg); }
-      100% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
-    }
+/* DASHBOARD */
+.dashboard{
+  display:none;
+  padding:10px;
+}
 
-    @keyframes goldenFloat {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0); }
-    }
+.cards{
+  display:flex;
+  gap:10px;
+}
+.card{
+  flex:1;
+  background:#fff;
+  padding:10px;
+  border-radius:10px;
+}
 
-    .watermark-sparkles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+/* CLIENT LIST */
+.record{
+  background:#fff;
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
+}
 
-    .watermark-sparkles::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-
-      background-image:
-        radial-gradient(circle, rgba(255,223,120,0.95) 0 1.5px, transparent 2px),
-        radial-gradient(circle, rgba(255,200,80,0.85) 0 2px, transparent 2.5px);
-
-      background-size: 120px 120px, 180px 180px;
-      background-position: 10% 20%, 80% 30%;
-
-      filter: drop-shadow(0 0 6px rgba(255,215,120,0.8));
-
-      animation: goldenTwinkle 4s infinite, goldenFloat 8s infinite;
-    }
-
-    .watermark-sparkles::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-
-      background-image:
-        radial-gradient(circle, rgba(255,240,180,0.95) 0 1.2px, transparent 2px),
-        radial-gradient(circle, rgba(255,210,120,0.85) 0 1.6px, transparent 2px);
-
-      background-size: 160px 160px, 220px 220px;
-      background-position: 60% 10%, 30% 85%;
-
-      filter: drop-shadow(0 0 6px rgba(255,215,120,0.8));
-
-      animation: goldenTwinkle 6s infinite, goldenFloat 10s infinite;
-    }
-
-    /* ===== HEADER ===== */
-
-    .header {
-      background: linear-gradient(145deg, #0b1f33, #112e49);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .title {
-      margin: 0;
-      font-size: 2rem;
-    }
-
-    /* ===== CONTENT ===== */
-
-    .content {
-      padding: 1rem;
-      max-width: 900px;
-      margin: auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 0.7rem;
-      margin-top: 0.5rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      margin-top: 1rem;
-      padding: 0.7rem 1rem;
-      border-radius: 20px;
-      border: none;
-      background: var(--blue);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .record {
-      background: white;
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-  </style>
+.actions button{
+  width:auto;
+  margin-right:5px;
+}
+</style>
 </head>
 
-<body>
+<body class="bg">
 
-<div class="watermark-sparkles"></div>
+<div class="header">
+  <h2>KapsVision CRM</h2>
+</div>
 
-<header class="header">
-  <h1 class="title">KapsVision</h1>
-</header>
+<!-- LOGIN -->
+<div class="login" id="loginBox">
+  <h3>Admin Login</h3>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+</div>
 
-<main class="content">
+<!-- DASHBOARD -->
+<div class="dashboard" id="app">
 
-<form id="clientForm">
-  <input id="clientName" placeholder="Client Name" required>
-  <input id="contactNumber" placeholder="Contact Number" required>
-  <input id="state" placeholder="State" required>
-  <input id="city" placeholder="City" required>
-  <textarea id="address" placeholder="Address" required></textarea>
-  <input id="pinCode" placeholder="Pin Code" required>
+<div class="cards">
+  <div class="card">Clients: <b id="total">0</b></div>
+</div>
 
-  <button type="submit">Save Client</button>
-</form>
+<!-- FORM -->
+<h3>Add Client</h3>
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="city" placeholder="City">
+<button onclick="add()">Save</button>
 
-<div id="records"></div>
+<button onclick="exportData()">Export Backup</button>
 
-</main>
+<input id="search" placeholder="Search..." oninput="render()">
+
+<div id="list"></div>
+
+</div>
 
 <script>
-const STORAGE_KEY = "KapsVision.clients.web";
-let records = [];
+const KEY="crm";
+let data=[];
+let editId=null;
 
-function load() {
-  try {
-    records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    records = [];
+/* LOGIN */
+function login(){
+  if(user.value==="admin" && pass.value==="1234"){
+    loginBox.style.display="none";
+    app.style.display="block";
+    load();
+  } else alert("Wrong login");
+}
+
+/* LOAD/SAVE */
+function load(){
+  data=JSON.parse(localStorage.getItem(KEY))||[];
+  render();
+}
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(data));
+}
+
+/* ADD/EDIT */
+function add(){
+  if(!name.value||!phone.value)return alert("Fill all");
+
+  if(editId){
+    let r=data.find(x=>x.id==editId);
+    r.name=name.value;
+    r.phone=phone.value;
+    r.city=city.value;
+    editId=null;
+  } else {
+    data.unshift({
+      id:Date.now(),
+      name:name.value,
+      phone:phone.value,
+      city:city.value
+    });
   }
+
+  save();
+  render();
+  name.value=phone.value=city.value="";
+}
+
+/* DELETE */
+function del(id){
+  if(!confirm("Delete client?"))return;
+  data=data.filter(x=>x.id!=id);
+  save();
   render();
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+/* EDIT */
+function edit(id){
+  let r=data.find(x=>x.id==id);
+  name.value=r.name;
+  phone.value=r.phone;
+  city.value=r.city;
+  editId=id;
 }
 
-function render() {
-  const container = document.getElementById("records");
-  container.innerHTML = records.map(r => `
+/* RENDER */
+function render(){
+  let q=search.value.toLowerCase();
+
+  let filtered=data.filter(r=>
+    r.name.toLowerCase().includes(q)||
+    r.phone.includes(q)||
+    r.city.toLowerCase().includes(q)
+  );
+
+  total.innerText=data.length;
+
+  list.innerHTML=filtered.map(r=>`
     <div class="record">
-      <b>${r.clientName}</b><br>
-      ${r.contactNumber}<br>
-      ${r.state}, ${r.city}<br>
-      ${r.address}<br>
-      ${r.pinCode}
+      <b>${r.name}</b><br>
+      ${r.phone} | ${r.city}
+      <div class="actions">
+        <button onclick="edit(${r.id})">Edit</button>
+        <button onclick="del(${r.id})">Delete</button>
+      </div>
     </div>
   `).join("");
 }
 
-document.getElementById("clientForm").addEventListener("submit", e => {
-  e.preventDefault();
-
-  const data = {
-    clientName: clientName.value,
-    contactNumber: contactNumber.value,
-    state: state.value,
-    city: city.value,
-    address: address.value,
-    pinCode: pinCode.value
-  };
-
-  if (records.some(r => r.contactNumber === data.contactNumber)) {
-    alert("Duplicate contact!");
-    return;
-  }
-
-  records.unshift(data);
-  save();
-  render();
-  e.target.reset();
-});
-
-load();
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
+/* EXPORT */
+function exportData(){
+  let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="crm-backup.json";
+  a.click();
 }
 </script>
 
