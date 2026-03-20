@@ -1,212 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KapsVision CRM</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+<title>KapsVision Client Register</title>
+
+<!-- PWA + iOS -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#14324a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
-body { font-family:Segoe UI; margin:0; background:#efe8dc; }
-
-/* GOLDEN BACKGROUND */
-@keyframes glow {
-  0%{opacity:.3}50%{opacity:1}100%{opacity:.3}
-}
-.bg::before{
-  content:"";
-  position:fixed;inset:0;
-  background:
-    radial-gradient(circle,#ffd700 1px,transparent 2px) 20px 20px/120px 120px;
-  animation:glow 4s infinite;
+body{
+  margin:0;
+  font-family:Segoe UI;
+  background:#efe8dc;
+  padding:15px;
+  padding-bottom:env(safe-area-inset-bottom);
 }
 
-/* HEADER */
-.header{
-  background:#112e49;
-  color:#fff;
-  padding:12px;
-  text-align:center;
+/* iOS zoom fix */
+input,textarea,select{
+  font-size:16px;
 }
 
-/* LOGIN */
-.login{
-  max-width:300px;
-  margin:80px auto;
-  background:#fff;
-  padding:20px;
-  border-radius:10px;
+h2{
+  margin:0 0 10px;
 }
 
-input,button{
+input,select,textarea{
   width:100%;
   padding:10px;
+  margin-top:8px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+button{
   margin-top:10px;
-}
-
-/* DASHBOARD */
-.dashboard{
-  display:none;
   padding:10px;
+  border:none;
+  border-radius:20px;
+  background:#1f6f9a;
+  color:#fff;
+  font-weight:bold;
 }
 
-.cards{
-  display:flex;
-  gap:10px;
+button:hover{
+  opacity:.9;
 }
+
+.delete{
+  background:#cf5b49;
+}
+
 .card{
-  flex:1;
   background:#fff;
   padding:10px;
-  border-radius:10px;
-}
-
-/* CLIENT LIST */
-.record{
-  background:#fff;
   margin-top:10px;
-  padding:10px;
   border-radius:10px;
-}
-
-.actions button{
-  width:auto;
-  margin-right:5px;
 }
 </style>
 </head>
 
-<body class="bg">
+<body>
 
-<div class="header">
-  <h2>KapsVision CRM</h2>
-</div>
+<h2>KapsVision</h2>
 
-<!-- LOGIN -->
-<div class="login" id="loginBox">
-  <h3>Admin Login</h3>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- DASHBOARD -->
-<div class="dashboard" id="app">
-
-<div class="cards">
-  <div class="card">Clients: <b id="total">0</b></div>
-</div>
-
-<!-- FORM -->
-<h3>Add Client</h3>
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
+<input id="name" placeholder="Client Name">
+<input id="phone" placeholder="Contact Number">
+<input id="state" placeholder="State">
 <input id="city" placeholder="City">
-<button onclick="add()">Save</button>
+<textarea id="address" placeholder="Address"></textarea>
+<input id="pin" placeholder="Pin Code">
 
-<button onclick="exportData()">Export Backup</button>
-
-<input id="search" placeholder="Search..." oninput="render()">
+<button onclick="save()">Save</button>
+<button onclick="exportData()">Export</button>
+<button onclick="document.getElementById('file').click()">Import</button>
+<input type="file" id="file" hidden>
 
 <div id="list"></div>
 
-</div>
-
 <script>
-const KEY="crm";
-let data=[];
-let editId=null;
+const STORAGE="kaps.clients";
+let records = JSON.parse(localStorage.getItem(STORAGE)) || [];
 
-/* LOGIN */
-function login(){
-  if(user.value==="admin" && pass.value==="1234"){
-    loginBox.style.display="none";
-    app.style.display="block";
-    load();
-  } else alert("Wrong login");
-}
-
-/* LOAD/SAVE */
-function load(){
-  data=JSON.parse(localStorage.getItem(KEY))||[];
-  render();
-}
+/* SAVE */
 function save(){
-  localStorage.setItem(KEY,JSON.stringify(data));
-}
+  let data={
+    id:Date.now(),
+    name:name.value.trim(),
+    phone:phone.value.trim(),
+    state:state.value.trim(),
+    city:city.value.trim(),
+    address:address.value.trim(),
+    pin:pin.value.trim()
+  };
 
-/* ADD/EDIT */
-function add(){
-  if(!name.value||!phone.value)return alert("Fill all");
-
-  if(editId){
-    let r=data.find(x=>x.id==editId);
-    r.name=name.value;
-    r.phone=phone.value;
-    r.city=city.value;
-    editId=null;
-  } else {
-    data.unshift({
-      id:Date.now(),
-      name:name.value,
-      phone:phone.value,
-      city:city.value
-    });
+  if(data.name.length<3){
+    alert("Enter valid name");
+    return;
   }
 
-  save();
+  if(!/^[0-9]{10}$/.test(data.phone)){
+    alert("Enter valid 10-digit number");
+    return;
+  }
+
+  if(!/^[0-9]{6}$/.test(data.pin)){
+    alert("Enter valid PIN");
+    return;
+  }
+
+  records.unshift(data);
+  localStorage.setItem(STORAGE, JSON.stringify(records));
+  clearForm();
   render();
-  name.value=phone.value=city.value="";
+}
+
+/* RENDER */
+function render(){
+  list.innerHTML = records.map(r=>`
+    <div class="card">
+      <b>${r.name}</b><br>
+      ${r.phone}<br>
+      ${r.city}, ${r.state}<br>
+      ${r.address}<br>
+      ${r.pin}<br><br>
+      <button onclick="edit(${r.id})">Edit</button>
+      <button class="delete" onclick="del(${r.id})">Delete</button>
+    </div>
+  `).join("");
 }
 
 /* DELETE */
 function del(id){
-  if(!confirm("Delete client?"))return;
-  data=data.filter(x=>x.id!=id);
-  save();
+  records = records.filter(r=>r.id!==id);
+  localStorage.setItem(STORAGE, JSON.stringify(records));
   render();
 }
 
 /* EDIT */
 function edit(id){
-  let r=data.find(x=>x.id==id);
+  let r = records.find(x=>x.id===id);
+  if(!r) return;
+
   name.value=r.name;
   phone.value=r.phone;
+  state.value=r.state;
   city.value=r.city;
-  editId=id;
+  address.value=r.address;
+  pin.value=r.pin;
+
+  del(id);
 }
 
-/* RENDER */
-function render(){
-  let q=search.value.toLowerCase();
-
-  let filtered=data.filter(r=>
-    r.name.toLowerCase().includes(q)||
-    r.phone.includes(q)||
-    r.city.toLowerCase().includes(q)
-  );
-
-  total.innerText=data.length;
-
-  list.innerHTML=filtered.map(r=>`
-    <div class="record">
-      <b>${r.name}</b><br>
-      ${r.phone} | ${r.city}
-      <div class="actions">
-        <button onclick="edit(${r.id})">Edit</button>
-        <button onclick="del(${r.id})">Delete</button>
-      </div>
-    </div>
-  `).join("");
+/* CLEAR */
+function clearForm(){
+  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
 }
 
 /* EXPORT */
 function exportData(){
-  let blob=new Blob([JSON.stringify(data)],{type:"application/json"});
-  let a=document.createElement("a");
+  const blob=new Blob([JSON.stringify(records,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download="crm-backup.json";
+  a.download="clients.json";
   a.click();
 }
+
+/* IMPORT */
+file.onchange=function(){
+  const reader=new FileReader();
+  reader.onload=function(){
+    records=JSON.parse(reader.result);
+    localStorage.setItem(STORAGE, JSON.stringify(records));
+    render();
+  };
+  reader.readAsText(this.files[0]);
+}
+
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+
+render();
 </script>
 
 </body>
