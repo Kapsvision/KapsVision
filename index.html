@@ -1,223 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="manifest" href="manifest.json">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#14324a" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#14324a" />
 
-  <!-- iOS PWA Support -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="KapsVision">
-  <link rel="apple-touch-icon" href="logo.png">
+<title>KapsVision Client Register</title>
 
-  <title>KapsVision Client Register</title>
+<!-- ✅ PWA -->
+<link rel="manifest" href="manifest.json">
 
-  <style>
-    :root {
-      --shell: #efe8dc;
-      --card: #ffffff;
-      --ink: #10283f;
-      --body: #24384a;
-      --muted: #6a7a89;
-      --soft: #f7fafc;
-      --soft-2: #fbfcfd;
-      --line: #dbe4eb;
-      --blue: #1f6f9a;
-      --gold: #d9b15f;
-      --gold-deep: #b98522;
-      --royal-night: #0b1f33;
-      --royal-navy: #112e49;
-      --green: #4b8a2f;
-      --red: #cf5b49;
-      --shadow: 0 16px 34px rgba(20, 50, 74, 0.08);
-      --radius-lg: 18px;
-      --radius-sm: 10px;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Segoe UI;
+  background:#efe8dc;
+}
 
-    * { box-sizing: border-box; }
+/* SIMPLE CLEAN UI (optimized for performance) */
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:15px;
+}
 
-    body {
-      margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: var(--shell);
-    }
+h1{
+  text-align:center;
+  color:#14324a;
+}
 
-    /* ===== SHINING STARS ===== */
-    @keyframes shiningStars {
-      0% { opacity: 0.2; transform: scale(0.8); }
-      50% { opacity: 0.9; transform: scale(1.2); }
-      100% { opacity: 0.2; transform: scale(0.8); }
-    }
+.card{
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  margin-top:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
 
-    .watermark-sparkles {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-    }
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  margin-top:5px;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
 
-    .watermark-sparkles::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.9) 0 1.5px, transparent 2px),
-        radial-gradient(circle, rgba(255,240,200,0.8) 0 2px, transparent 2.5px);
-      background-size: 120px 120px, 180px 180px;
-      background-position: 10% 20%, 80% 30%;
-      animation: shiningStars 4s infinite;
-    }
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:20px;
+  margin:5px;
+  color:#fff;
+  cursor:pointer;
+}
 
-    .watermark-sparkles::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background-image:
-        radial-gradient(circle, rgba(255,255,255,0.95) 0 1.2px, transparent 2px),
-        radial-gradient(circle, rgba(255,245,210,0.85) 0 1.6px, transparent 2px);
-      background-size: 160px 160px, 220px 220px;
-      background-position: 60% 10%, 30% 85%;
-      animation: shiningStars 6s infinite;
-    }
+.primary{background:#1f6f9a;}
+.utility{background:#556573;}
+.clear{background:#cf5b49;}
 
-    /* ===== HEADER ===== */
-    .header {
-      background: linear-gradient(145deg, #0b1f33, #112e49);
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
+.list{
+  margin-top:10px;
+}
 
-    .title {
-      margin: 0;
-      font-size: 2rem;
-    }
+.item{
+  background:#fff;
+  padding:10px;
+  margin-top:8px;
+  border-radius:10px;
+}
 
-    /* ===== FORM ===== */
-    .content {
-      padding: 1rem;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 0.7rem;
-      margin-top: 0.4rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      margin-top: 1rem;
-      padding: 0.7rem 1rem;
-      border: none;
-      border-radius: 20px;
-      background: var(--blue);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .record {
-      background: white;
-      margin-top: 1rem;
-      padding: 1rem;
-      border-radius: 12px;
-      box-shadow: var(--shadow);
-    }
-
-  </style>
+</style>
 </head>
 
 <body>
 
-<div class="watermark-sparkles"></div>
+<div class="container">
+<h1>KapsVision</h1>
 
-<header class="header">
-  <h1 class="title">KapsVision</h1>
-</header>
+<div class="card">
+<form id="form">
 
-<main class="content">
+<input id="name" placeholder="Client Name">
+<input id="phone" placeholder="Contact Number" inputmode="numeric">
+<textarea id="address" placeholder="Address"></textarea>
 
-<form id="clientForm">
-  <input id="clientName" placeholder="Client Name">
-  <input id="contactNumber" placeholder="Contact Number">
-  <input id="state" placeholder="State">
-  <input id="city" placeholder="City">
-  <textarea id="address" placeholder="Address"></textarea>
-  <input id="pinCode" placeholder="Pin Code">
+<select id="state"></select>
+<select id="city"></select>
+<input id="cityManual" placeholder="Enter city" style="display:none">
 
-  <button type="submit">Save Client</button>
+<input id="pin" placeholder="Pin Code" inputmode="numeric">
+
+<div>
+<button class="primary">Save</button>
+<button type="button" class="utility" id="exportBtn">Export Excel</button>
+<button type="button" class="utility" id="backupBtn">Backup</button>
+<button type="button" class="utility" id="restoreBtn">Restore</button>
+<button type="button" class="clear" id="clearAll">Clear All</button>
+<input type="file" id="restoreFile" hidden>
+</div>
+
 </form>
+</div>
 
-<div id="records"></div>
+<div class="card">
+<input id="search" placeholder="Search...">
+<div id="list" class="list"></div>
+</div>
 
-</main>
+</div>
+
+<script src="india-locations.js"></script>
 
 <script>
-const STORAGE_KEY = "KapsVision.clients.web";
-let records = [];
+let STORAGE_KEY="KapsVision.clients.web";
+let records=[];
+let map=window.KAPSVISION_INDIA_LOCATIONS||{};
 
-function load() {
-  try {
-    records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    records = [];
-  }
-  render();
+let list=document.getElementById("list");
+
+/* SAFE STORAGE */
+function save(){
+ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(records));}
+ catch{alert("Storage blocked (iOS private mode)");}
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+function load(){
+ try{
+   records=JSON.parse(localStorage.getItem(STORAGE_KEY))||[];
+ }catch{records=[];}
 }
 
-function render() {
-  const container = document.getElementById("records");
-  container.innerHTML = records.map(r => `
-    <div class="record">
-      <b>${r.clientName}</b><br>
-      ${r.contactNumber}<br>
-      ${r.state}, ${r.city}<br>
-      ${r.address}<br>
-      ${r.pinCode}
-    </div>
-  `).join("");
+/* STATE CITY */
+function loadStates(){
+ let s=document.getElementById("state");
+ s.innerHTML="<option>Select State</option>";
+ Object.keys(map).forEach(x=>s.add(new Option(x,x)));
 }
 
-document.getElementById("clientForm").addEventListener("submit", e => {
-  e.preventDefault();
+function loadCities(state){
+ let c=document.getElementById("city");
+ c.innerHTML="<option>Select City</option>";
+ let arr=map[state]||[];
+ arr.forEach(x=>c.add(new Option(x,x)));
+ c.add(new Option("Other","other"));
+}
 
-  const data = {
-    clientName: clientName.value,
-    contactNumber: contactNumber.value,
-    state: state.value,
-    city: city.value,
-    address: address.value,
-    pinCode: pinCode.value
-  };
+state.onchange=()=>loadCities(state.value);
 
-  if (records.some(r => r.contactNumber === data.contactNumber)) {
-    alert("Duplicate contact!");
-    return;
-  }
+city.onchange=()=>{
+ cityManual.style.display=(city.value==="other")?"block":"none";
+};
 
-  records.unshift(data);
-  save();
-  render();
-  e.target.reset();
-});
+/* RENDER */
+function render(){
+ let q=search.value.toLowerCase();
 
+ list.innerHTML=records
+ .filter(r=>JSON.stringify(r).toLowerCase().includes(q))
+ .map(r=>`
+ <div class="item">
+ <b>${r.name}</b><br>
+ ${r.phone}<br>
+ ${r.city}, ${r.state}<br>
+ ${r.pin}
+ <br>
+ <button onclick="del('${r.id}')">Delete</button>
+ </div>`).join("");
+}
+
+/* DELETE */
+function del(id){
+ records=records.filter(x=>x.id!=id);
+ save();render();
+}
+
+/* SAVE */
+form.onsubmit=e=>{
+ e.preventDefault();
+
+ let data={
+  id:Date.now(),
+  name:name.value.trim(),
+  phone:phone.value.trim(),
+  address:address.value.trim(),
+  state:state.value,
+  city:(city.value==="other")?cityManual.value:city.value,
+  pin:pin.value
+ };
+
+ if(Object.values(data).some(v=>!v)){
+  alert("Fill all fields"); return;
+ }
+
+ if(!/^\d{10}$/.test(data.phone)){
+  alert("Invalid phone"); return;
+ }
+
+ records.unshift(data);
+ save();
+ form.reset();
+ render();
+};
+
+/* SEARCH */
+search.oninput=render;
+
+/* CLEAR ALL */
+clearAll.onclick=()=>{
+ if(confirm("Clear all?")){
+  records=[];
+  save();render();
+ }
+};
+
+/* EXPORT CSV */
+exportBtn.onclick=()=>{
+ let csv="Name,Phone,State,City,Pin\n";
+ records.forEach(r=>{
+  csv+=`${r.name},${r.phone},${r.state},${r.city},${r.pin}\n`;
+ });
+ let blob=new Blob([csv]);
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="clients.csv";
+ a.click();
+};
+
+/* BACKUP */
+backupBtn.onclick=()=>{
+ let blob=new Blob([JSON.stringify(records)]);
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="backup.json";
+ a.click();
+};
+
+/* RESTORE */
+restoreBtn.onclick=()=>restoreFile.click();
+
+restoreFile.onchange=e=>{
+ let file=e.target.files[0];
+ let reader=new FileReader();
+ reader.onload=x=>{
+  try{
+   records=JSON.parse(x.target.result);
+   save();render();
+   alert("Restored");
+  }catch{alert("Invalid file");}
+ };
+ reader.readAsText(file);
+};
+
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+ navigator.serviceWorker.register("sw.js");
+}
+
+/* INIT */
+loadStates();
 load();
-</script>
+render();
 
-<!-- Service Worker -->
-<script>
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js");
-}
 </script>
 
 </body>
