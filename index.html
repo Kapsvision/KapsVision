@@ -1,158 +1,220 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#14324a" />
-  <title>KapsVision Client Register</title>
+<script>
+(function () {
+  var STORAGE_KEY = "KapsVision.clients.web";
+  var cityStateMap = window.KAPSVISION_INDIA_LOCATIONS || {};
+  var records = [];
 
-  <style>
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      background: #efe8dc;
-      color: #24384a;
+  var form = document.getElementById("clientForm");
+  var searchInput = document.getElementById("searchInput");
+  var statusMessage = document.getElementById("statusMessage");
+  var desktopTableBody = document.getElementById("desktopTableBody");
+  var mobileList = document.getElementById("mobileList");
+  var stateSelect = document.getElementById("state");
+  var citySelect = document.getElementById("city");
+  var cityManual = document.getElementById("cityManual");
+
+  function cleanText(v) {
+    return String(v || "").trim();
+  }
+
+  function setStatus(msg) {
+    statusMessage.textContent = msg;
+  }
+
+  // ✅ Safe LocalStorage (iOS fix)
+  function saveRecords() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    } catch (e) {
+      setStatus("Storage failed. iOS private mode may block saving.");
+    }
+  }
+
+  function loadRecords() {
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      records = saved ? JSON.parse(saved) : [];
+      if (!Array.isArray(records)) records = [];
+      setStatus(records.length + " client(s) loaded.");
+    } catch {
+      records = [];
+      setStatus("Storage read failed. Starting fresh.");
+    }
+  }
+
+  function populateStates() {
+    Object.keys(cityStateMap).sort().forEach(function (s) {
+      stateSelect.add(new Option(s, s));
+    });
+  }
+
+  function loadCities(state, selectedCity) {
+    var cities = cityStateMap[state] || [];
+
+    citySelect.innerHTML = "";
+    citySelect.add(new Option("Select city", ""));
+    citySelect.disabled = !cities.length;
+
+    cities.forEach(function (c) {
+      citySelect.add(new Option(c, c));
+    });
+
+    if (cities.length) {
+      citySelect.add(new Option("Other", "__OTHER__"));
     }
 
-    .header {
-      background: #10283f;
-      color: #fff;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    cityManual.classList.add("hidden");
 
-    .header img {
-      width: 60px;
-    }
-
-    .container {
-      padding: 15px;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 80px;
-    }
-
-    button {
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 20px;
-      background: #1f6f9a;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .delete {
-      background: #cf5b49;
-    }
-
-    .card {
-      background: #fff;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="header">
-    <img src="logo.png" alt="logo">
-    <h2>KapsVision</h2>
-  </div>
-
-  <div class="container">
-
-    <input id="clientName" placeholder="Client Name">
-    <input id="contactNumber" placeholder="Contact Number">
-    <input id="state" placeholder="State">
-    <input id="city" placeholder="City">
-    <textarea id="address" placeholder="Address"></textarea>
-    <input id="pinCode" placeholder="Pin Code">
-
-    <button onclick="saveClient()">Save Client</button>
-
-    <div id="clientList"></div>
-
-  </div>
-
-  <script>
-    let records = JSON.parse(localStorage.getItem("kapsvision.clients")) || [];
-
-    function saveClient() {
-      const client = {
-        id: Date.now(),
-        name: document.getElementById("clientName").value.trim(),
-        phone: document.getElementById("contactNumber").value.trim(),
-        state: document.getElementById("state").value.trim(),
-        city: document.getElementById("city").value.trim(),
-        address: document.getElementById("address").value.trim(),
-        pin: document.getElementById("pinCode").value.trim()
-      };
-
-      if (!client.name || !client.phone) {
-        alert("Please enter required details");
-        return;
+    if (selectedCity) {
+      if (cities.includes(selectedCity)) {
+        citySelect.value = selectedCity;
+      } else {
+        citySelect.value = "__OTHER__";
+        cityManual.value = selectedCity;
+        cityManual.classList.remove("hidden");
       }
+    }
+  }
 
-      records.unshift(client);
-      localStorage.setItem("kapsvision.clients", JSON.stringify(records));
+  function getCity() {
+    return citySelect.value === "__OTHER__"
+      ? cleanText(cityManual.value)
+      : cleanText(citySelect.value);
+  }
 
-      clearForm();
-      renderClients();
+  function toggleManualCity() {
+    if (citySelect.value === "__OTHER__") {
+      cityManual.classList.remove("hidden");
+      cityManual.focus();
+    } else {
+      cityManual.classList.add("hidden");
+      cityManual.value = "";
+    }
+  }
+
+  function getFormData() {
+    return {
+      name: cleanText(clientName.value),
+      phone: cleanText(contactNumber.value),
+      address: cleanText(address.value),
+      state: cleanText(stateSelect.value),
+      city: getCity(),
+      pin: cleanText(pinCode.value)
+    };
+  }
+
+  function validate(data) {
+    if (Object.values(data).some(v => !v)) return "Fill all fields";
+
+    if (!/^\d{10}$/.test(data.phone))
+      return "Enter valid 10-digit contact number";
+
+    if (!/^\d{6}$/.test(data.pin))
+      return "Enter valid 6-digit PIN";
+
+    return null;
+  }
+
+  function resetForm() {
+    form.reset();
+    loadCities("", "");
+  }
+
+  function escapeHtml(v) {
+    return v.replace(/[&<>"']/g, function (m) {
+      return ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[m];
+    });
+  }
+
+  function render() {
+    var q = cleanText(searchInput.value).toLowerCase();
+
+    var filtered = records.filter(r =>
+      Object.values(r).join(" ").toLowerCase().includes(q)
+    );
+
+    document.getElementById("totalClients").textContent = records.length;
+
+    if (!filtered.length) {
+      desktopTableBody.innerHTML =
+        '<tr><td colspan="7" class="empty-row">No records</td></tr>';
+      mobileList.innerHTML =
+        '<div class="empty-row">No records</div>';
+      return;
     }
 
-    function renderClients() {
-      const container = document.getElementById("clientList");
+    desktopTableBody.innerHTML = filtered.map(r => `
+      <tr>
+        <td><b>${escapeHtml(r.name)}</b></td>
+        <td>${r.phone}</td>
+        <td>${escapeHtml(r.address)}</td>
+        <td>${r.state}</td>
+        <td>${r.city}</td>
+        <td>${r.pin}</td>
+        <td><button class="delete-btn" data-id="${r.id}">Delete</button></td>
+      </tr>
+    `).join("");
 
-      if (!records.length) {
-        container.innerHTML = "<p>No clients saved.</p>";
-        return;
-      }
-
-      container.innerHTML = records.map(c => `
-        <div class="card">
-          <strong>${c.name}</strong><br>
-          ${c.phone}<br>
-          ${c.city}, ${c.state}<br>
-          ${c.address}<br>
-          ${c.pin}<br><br>
-          <button class="delete" onclick="deleteClient(${c.id})">Delete</button>
+    mobileList.innerHTML = filtered.map(r => `
+      <div class="record-card">
+        <b>${escapeHtml(r.name)}</b><br>
+        ${r.phone}<br>
+        ${r.city}, ${r.state}
+        <div style="margin-top:8px;">
+          <button class="delete-btn" data-id="${r.id}">Delete</button>
         </div>
-      `).join("");
+      </div>
+    `).join("");
+  }
+
+  function deleteRecord(id) {
+    records = records.filter(r => r.id !== id);
+    saveRecords();
+    render();
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var data = getFormData();
+    var error = validate(data);
+
+    if (error) {
+      setStatus(error);
+      return;
     }
 
-    function deleteClient(id) {
-      records = records.filter(c => c.id !== id);
-      localStorage.setItem("kapsvision.clients", JSON.stringify(records));
-      renderClients();
+    records.unshift({
+      id: Date.now().toString(),
+      ...data
+    });
+
+    saveRecords();
+    render();
+    resetForm();
+
+    setStatus("Client saved successfully");
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.target.dataset.id) {
+      deleteRecord(e.target.dataset.id);
     }
+  });
 
-    function clearForm() {
-      document.getElementById("clientName").value = "";
-      document.getElementById("contactNumber").value = "";
-      document.getElementById("state").value = "";
-      document.getElementById("city").value = "";
-      document.getElementById("address").value = "";
-      document.getElementById("pinCode").value = "";
-    }
+  searchInput.addEventListener("input", render);
+  stateSelect.addEventListener("change", () => loadCities(stateSelect.value, ""));
+  citySelect.addEventListener("change", toggleManualCity);
 
-    renderClients();
-  </script>
-
-</body>
-</html>
+  populateStates();
+  loadCities("", "");
+  loadRecords();
+  render();
+})();
+</script>
