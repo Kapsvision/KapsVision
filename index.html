@@ -260,7 +260,34 @@ if("serviceWorker" in navigator){
 loadStates();
 load();
 render();
+<script>
+/* INLINE SERVICE WORKER (iPhone-friendly workaround) */
+if ("serviceWorker" in navigator) {
 
+  const swCode = `
+    const CACHE_NAME = "kapsvision-inline-v1";
+    const FILES = ["./"];
+
+    self.addEventListener("install", e => {
+      e.waitUntil(
+        caches.open(CACHE_NAME).then(c => c.addAll(FILES))
+      );
+    });
+
+    self.addEventListener("fetch", e => {
+      e.respondWith(
+        caches.match(e.request).then(r => r || fetch(e.request))
+      );
+    });
+  `;
+
+  const blob = new Blob([swCode], { type: "text/javascript" });
+  const swURL = URL.createObjectURL(blob);
+
+  navigator.serviceWorker.register(swURL)
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.log("SW failed:", err));
+}
 </script>
 
 </body>
