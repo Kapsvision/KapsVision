@@ -1,234 +1,1281 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>KapsVision CRM</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#14324a" />
+  <title>KapsVision Client Register</title>
+  <style>
+    :root {
+      --shell: #efe8dc;
+      --card: #ffffff;
+      --ink: #10283f;
+      --body: #24384a;
+      --muted: #6a7a89;
+      --soft: #f7fafc;
+      --soft-2: #fbfcfd;
+      --line: #dbe4eb;
+      --blue: #1f6f9a;
+      --gold: #d9b15f;
+      --gold-deep: #b98522;
+      --gold-pale: #f3dfad;
+      --royal-night: #0b1f33;
+      --royal-navy: #112e49;
+      --green: #4b8a2f;
+      --red: #cf5b49;
+      --shadow: 0 16px 34px rgba(20, 50, 74, 0.08);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+    }
 
-<style>
-body{
-  font-family: Arial;
-  background:#f5f7fa;
-  margin:0;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-header{
-  background:#10283f;
-  color:#fff;
-  padding:15px;
-  text-align:center;
-}
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--shell);
+      color: var(--body);
+    }
 
-.container{
-  padding:15px;
-}
+    body {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  margin:6px 0;
-  border:1px solid #ccc;
-  border-radius:8px;
-}
+    img {
+      max-width: 100%;
+      display: block;
+    }
 
-button{
-  padding:10px;
-  margin:5px;
-  border:none;
-  border-radius:20px;
-  color:#fff;
-  cursor:pointer;
-}
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
 
-.primary{background:#1f6f9a;}
-.utility{background:#555;}
-.clear{background:#c0392b;}
+    .app-shell {
+      position: relative;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(255, 237, 182, 0.95), transparent 18rem),
+        radial-gradient(circle at 88% 6%, rgba(217, 177, 95, 0.42), transparent 22rem),
+        radial-gradient(circle at 50% 26%, rgba(185, 133, 34, 0.18), transparent 30rem),
+        radial-gradient(circle at bottom left, rgba(31, 111, 154, 0.08), transparent 18rem),
+        var(--shell);
+    }
 
-.card{
-  background:#fff;
-  padding:10px;
-  margin-top:10px;
-  border-radius:10px;
-}
+    @keyframes shimmerFloat {
+      0% {
+        transform: translate(-50%, -50%) scale(0.97);
+        opacity: 0.22;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.05);
+        opacity: 0.38;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(0.97);
+        opacity: 0.22;
+      }
+    }
 
-</style>
+    @keyframes sparkleDrift {
+      0% {
+        transform: translateY(0) scale(0.86);
+        opacity: 0.24;
+      }
+      50% {
+        transform: translateY(-12px) scale(1.1);
+        opacity: 0.52;
+      }
+      100% {
+        transform: translateY(0) scale(0.86);
+        opacity: 0.24;
+      }
+    }
+
+    @keyframes logoSparkle {
+      0% {
+        opacity: 0.5;
+        transform: rotate(0deg) scale(0.92);
+      }
+      50% {
+        opacity: 0.98;
+        transform: rotate(8deg) scale(1.12);
+      }
+      100% {
+        opacity: 0.5;
+        transform: rotate(0deg) scale(0.92);
+      }
+    }
+
+    @keyframes logoGlowPulse {
+      0% {
+        filter:
+          drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22))
+          drop-shadow(0 0 28px rgba(185, 133, 34, 0.42))
+          drop-shadow(0 0 48px rgba(243, 223, 173, 0.22));
+      }
+      50% {
+        filter:
+          drop-shadow(0 14px 28px rgba(0, 0, 0, 0.26))
+          drop-shadow(0 0 40px rgba(243, 223, 173, 0.78))
+          drop-shadow(0 0 82px rgba(185, 133, 34, 0.46));
+      }
+      100% {
+        filter:
+          drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22))
+          drop-shadow(0 0 28px rgba(185, 133, 34, 0.42))
+          drop-shadow(0 0 48px rgba(243, 223, 173, 0.22));
+      }
+    }
+
+    .app-shell::before {
+      content: "";
+      position: fixed;
+      top: 56%;
+      left: 50%;
+      width: min(96vw, 820px);
+      height: min(96vw, 820px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      background-image: url("logo.png");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      opacity: 0.22;
+      mix-blend-mode: multiply;
+      filter:
+        saturate(1.34)
+        brightness(1.08)
+        contrast(1.06)
+        drop-shadow(0 0 42px rgba(185, 133, 34, 0.4))
+        drop-shadow(0 0 84px rgba(243, 223, 173, 0.34));
+      animation: shimmerFloat 7.2s ease-in-out infinite;
+    }
+
+    .app-shell::after {
+      content: "";
+      position: fixed;
+      top: 56%;
+      left: 50%;
+      width: min(112vw, 960px);
+      height: min(112vw, 960px);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle, rgba(243, 223, 173, 0.42) 0%, rgba(243, 223, 173, 0.24) 18%, rgba(185, 133, 34, 0.14) 34%, rgba(185, 133, 34, 0.04) 54%, transparent 74%);
+      filter: blur(24px);
+      animation: shimmerFloat 8.4s ease-in-out infinite;
+    }
+
+    .watermark-sparkles {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.9;
+    }
+
+    .watermark-sparkles::before,
+    .watermark-sparkles::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-repeat: no-repeat;
+      filter: blur(0.2px);
+      animation: sparkleDrift 5.6s ease-in-out infinite;
+    }
+
+    .watermark-sparkles::before {
+      background-image:
+        radial-gradient(circle, rgba(255, 249, 233, 0.98) 0 2px, transparent 3px),
+        radial-gradient(circle, rgba(243, 223, 173, 0.96) 0 2.2px, transparent 3px),
+        radial-gradient(circle, rgba(255, 244, 214, 0.94) 0 1.8px, transparent 3px),
+        radial-gradient(circle, rgba(255, 236, 184, 0.92) 0 2.1px, transparent 3px),
+        radial-gradient(circle, rgba(255, 250, 238, 0.98) 0 1.7px, transparent 3px);
+      background-size: 16px 16px, 18px 18px, 16px 16px, 18px 18px, 15px 15px;
+      background-position: 22% 24%, 72% 20%, 58% 64%, 32% 76%, 78% 58%;
+    }
+
+    .watermark-sparkles::after {
+      background-image:
+        linear-gradient(rgba(255, 249, 233, 0.98), rgba(255, 249, 233, 0.98)),
+        linear-gradient(rgba(243, 223, 173, 0.92), rgba(243, 223, 173, 0.92)),
+        linear-gradient(rgba(255, 246, 218, 0.96), rgba(255, 246, 218, 0.96)),
+        linear-gradient(rgba(255, 233, 173, 0.88), rgba(255, 233, 173, 0.88));
+      background-size: 1px 22px, 22px 1px, 1px 18px, 18px 1px;
+      background-position: 22.4% 23.6%, 22.4% 23.6%, 72.2% 19.4%, 72.2% 19.4%;
+      animation-delay: 1.4s;
+    }
+
+    .content,
+    .header {
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 14% 10%, rgba(243, 223, 173, 0.36), transparent 14rem),
+        radial-gradient(circle at 85% 0%, rgba(217, 177, 95, 0.26), transparent 18rem),
+        linear-gradient(145deg, var(--royal-night) 0%, var(--ink) 46%, var(--royal-navy) 100%);
+      color: #fff;
+      border-bottom: 4px solid var(--gold);
+      padding: 1.25rem 1rem 1.5rem;
+    }
+
+    .header::before,
+    .header::after {
+      content: "";
+      position: absolute;
+      inset: auto;
+      pointer-events: none;
+      border-radius: 999px;
+      filter: blur(6px);
+      opacity: 0.75;
+    }
+
+    .header::before {
+      width: 14rem;
+      height: 14rem;
+      top: -7rem;
+      right: -3rem;
+      background: radial-gradient(circle, rgba(243, 223, 173, 0.32), transparent 70%);
+    }
+
+    .header::after {
+      width: 11rem;
+      height: 11rem;
+      bottom: -5rem;
+      left: -3rem;
+      background: radial-gradient(circle, rgba(185, 133, 34, 0.2), transparent 72%);
+    }
+
+    .header-inner {
+     position: relative;
+     z-index: 1;
+     width: min(1100px, 100%);
+     margin: 0 auto;
+     display: grid;
+     grid-template-columns: 156px 1fr;
+     gap: 1.05rem;
+     align-items: center;
+  
+    }
+
+    .logo-panel {
+      width: 156px;
+      height: 156px;
+      position: relative;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .logo-panel::before,
+    .logo-panel::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo-panel::before {
+      inset: 10%;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(243, 223, 173, 0.48), rgba(243, 223, 173, 0.13) 46%, transparent 74%);
+      filter: blur(14px);
+    }
+
+    .logo-panel::after {
+      top: 14px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background:
+        linear-gradient(rgba(255, 250, 239, 0.99), rgba(255, 250, 239, 0.99)),
+        linear-gradient(rgba(243, 223, 173, 0.99), rgba(243, 223, 173, 0.99));
+      background-size: 2px 24px, 24px 2px;
+      background-position: center, center;
+      background-repeat: no-repeat;
+      filter:
+        drop-shadow(0 0 12px rgba(255, 236, 184, 0.96))
+        drop-shadow(0 0 26px rgba(185, 133, 34, 0.56));
+      animation: logoSparkle 2.9s ease-in-out infinite;
+    }
+
+    .logo-panel .logo-sparkle {
+      position: absolute;
+      left: 14px;
+      bottom: 18px;
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+      z-index: 1;
+      background:
+        linear-gradient(rgba(255, 250, 239, 0.98), rgba(255, 250, 239, 0.98)),
+        linear-gradient(rgba(243, 223, 173, 0.96), rgba(243, 223, 173, 0.96));
+      background-size: 2px 18px, 18px 2px;
+      background-position: center, center;
+      background-repeat: no-repeat;
+      filter:
+        drop-shadow(0 0 10px rgba(255, 242, 205, 0.9))
+        drop-shadow(0 0 18px rgba(185, 133, 34, 0.46));
+      animation: logoSparkle 3.6s ease-in-out infinite 0.8s;
+    }
+
+    .logo-panel img {
+      width: 156px;
+      height: 156px;
+      object-fit: contain;
+      position: relative;
+      z-index: 1;
+      filter:
+        drop-shadow(0 10px 18px rgba(0, 0, 0, 0.22))
+        drop-shadow(0 0 24px rgba(215, 167, 80, 0.38));
+      animation: logoGlowPulse 3.8s ease-in-out infinite;
+    }
+
+    .eyebrow {
+      margin: 0;
+      font-size: 0.74rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #d7e6f2;
+      font-weight: 700;
+    }
+
+    .title {
+      margin: 0.35rem 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      line-height: 1.06;
+      color: #fffaf0;
+      text-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.2),
+        0 0 16px rgba(243, 223, 173, 0.14);
+    }
+
+    .subtitle {
+      margin: 0.65rem 0 0;
+      max-width: 48rem;
+      color: #d4e3ef;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+
+    .content {
+      position: relative;
+      z-index: 1;
+      width: min(1100px, calc(100% - 2rem));
+      margin: 1.1rem auto 0;
+      padding-bottom: 2rem;
+    }
+
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .summary-card,
+    .panel,
+    .table-panel {
+      background: var(--card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card {
+      padding: 1rem;
+      border-top: 4px solid var(--blue);
+    }
+
+    .summary-card.gold {
+      border-top-color: var(--gold-deep);
+    }
+
+    .summary-card.green {
+      border-top-color: var(--green);
+    }
+
+    .summary-card.red {
+      border-top-color: var(--red);
+    }
+
+    .summary-label {
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .summary-value {
+      margin-top: 0.55rem;
+      font-size: clamp(1.7rem, 5vw, 2.2rem);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.1;
+      word-break: break-word;
+    }
+
+    .summary-note {
+      margin-top: 0.4rem;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .panel,
+    .table-panel {
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+
+    .panel-title {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      font-size: 1.55rem;
+    }
+
+    .panel-subtitle {
+      margin: 0.35rem 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .form-area {
+      margin-top: 1rem;
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .form-row {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 0.45rem;
+      font-size: 0.73rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #5f7080;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      border: 1px solid #cfd8e3;
+      border-radius: var(--radius-sm);
+      background: var(--soft-2);
+      color: var(--body);
+      padding: 0.85rem 0.95rem;
+      outline: none;
+      transition: border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .field textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--blue);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(31, 111, 154, 0.12);
+    }
+
+    .field select {
+      appearance: none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) calc(50% - 3px),
+        calc(100% - 12px) calc(50% - 3px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      padding-right: 2.6rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .inline-note {
+      margin-top: 0.45rem;
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      margin-top: 1rem;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 0.82rem 1.1rem;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      min-width: 9rem;
+      transition: transform 0.14s ease, opacity 0.14s ease;
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button.primary {
+      background: var(--blue);
+    }
+
+    button.utility {
+      background: #556573;
+    }
+
+    button.clear {
+      background: var(--red);
+    }
+
+    .helper-strip,
+    .status-row,
+    .search-box {
+      margin-top: 0.9rem;
+      padding: 0.85rem 0.95rem;
+      border-radius: 12px;
+      border: 1px solid #dde6ed;
+    }
+
+    .helper-strip,
+    .search-box {
+      background: var(--soft);
+    }
+
+    .helper-strip {
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #647686;
+    }
+
+    .status-row {
+      background: #f5f9fc;
+      display: grid;
+      gap: 0.25rem;
+    }
+
+    .status-message {
+      font-size: 0.87rem;
+      color: #4f6373;
+    }
+
+    .status-path {
+      font-size: 0.76rem;
+      color: #7c8b99;
+      word-break: break-all;
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid #cfd8e3;
+      border-radius: 10px;
+      background: #fff;
+      padding: 0.78rem 0.9rem;
+      color: var(--body);
+      outline: none;
+    }
+
+    .table-box {
+      margin-top: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .mobile-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .record-card {
+      padding: 1rem;
+      border-top: 1px solid #e8eef3;
+      background: #fff;
+    }
+
+    .record-card:first-child {
+      border-top: 0;
+    }
+
+    .record-card:nth-child(even) {
+      background: var(--soft-2);
+    }
+
+    .record-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.8rem;
+      align-items: flex-start;
+    }
+
+    .record-name {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    .record-date {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold-deep);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 0.65rem;
+      margin-top: 0.85rem;
+    }
+
+    .detail {
+      border-top: 1px solid #e8eef3;
+      padding-top: 0.6rem;
+    }
+
+    .detail-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .detail-value {
+      margin-top: 0.22rem;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      color: var(--body);
+      word-break: break-word;
+    }
+
+    .record-actions {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .delete-btn {
+      min-width: auto;
+      padding: 0.55rem 0.9rem;
+      background: var(--red);
+      font-size: 0.78rem;
+    }
+
+    .empty-row {
+      padding: 1.6rem 1rem;
+      text-align: center;
+      color: #7c8c99;
+      font-style: italic;
+      background: var(--soft-2);
+    }
+
+    .desktop-table {
+      display: none;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 720px) {
+      .header {
+        padding: 1.4rem 1.5rem 1.7rem;
+      }
+
+      .header-inner {
+        grid-template-columns: 196px 1fr;
+        gap: 1.3rem;
+      }
+
+      .logo-panel {
+        width: 196px;
+        height: 196px;
+        border-radius: 34px;
+      }
+
+      .logo-panel::after {
+        top: 16px;
+        right: 10px;
+        width: 28px;
+        height: 28px;
+        background-size: 2px 28px, 28px 2px;
+      }
+
+      .logo-panel .logo-sparkle {
+        left: 20px;
+        bottom: 24px;
+        width: 22px;
+        height: 22px;
+        background-size: 2px 22px, 22px 2px;
+      }
+
+      .logo-panel img {
+        width: 196px;
+        height: 196px;
+      }
+
+      .content {
+        width: min(1120px, calc(100% - 3rem));
+      }
+
+      .summary-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-row.two {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .form-row.four {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .status-row {
+        grid-template-columns: 1fr auto;
+        align-items: center;
+      }
+    }
+
+    @media (min-width: 980px) {
+      .summary-row {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .form-row.four {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .form-row.two {
+        grid-template-columns: minmax(0, 3fr) minmax(180px, 1fr);
+      }
+
+      .mobile-list {
+        display: none;
+      }
+
+      .desktop-table {
+        display: block;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+      }
+
+      thead th {
+        background: var(--ink);
+        color: #fff;
+        text-align: left;
+        padding: 0.95rem 0.75rem;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        border-right: 1px solid #28445f;
+      }
+
+      thead th:last-child {
+        border-right: 0;
+      }
+
+      tbody td {
+        padding: 0.95rem 0.75rem;
+        border-top: 1px solid #e8eef3;
+        font-size: 0.9rem;
+        vertical-align: top;
+        word-break: break-word;
+      }
+
+      tbody tr:nth-child(even) {
+        background: var(--soft-2);
+      }
+
+      .table-name {
+        font-weight: 700;
+        color: var(--ink);
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="app-shell">
+    <div class="watermark-sparkles" aria-hidden="true"></div>
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo-panel">
+          <span class="logo-sparkle" aria-hidden="true"></span>
+          <img src="logo.png" alt="KapsVision logo" />
+        </div>
+        <div class="header-copy">
+          <p class="eyebrow">Client Operations Workspace</p>
+          <h1 class="title">KapsVision</h1>
+        </div>
+      </div>
+    </header>
 
-<header>
-<h2>KapsVision CRM</h2>
-</header>
+    <main class="content">
+      <section class="summary-row" aria-label="Client summary">
+        <article class="summary-card">
+          <div class="summary-label">Total Clients</div>
+          <div class="summary-value" id="totalClients">0</div>
+          <div class="summary-note">Saved in browser storage</div>
+        </article>
+        <article class="summary-card gold">
+          <div class="summary-label">States Covered</div>
+          <div class="summary-value" id="statesCovered">0</div>
+          <div class="summary-note">Unique client states</div>
+        </article>
+        <article class="summary-card green">
+          <div class="summary-label">Cities Covered</div>
+          <div class="summary-value" id="citiesCovered">0</div>
+          <div class="summary-note">Unique client cities</div>
+        </article>
+      </section>
 
-<div class="container">
+      <section class="panel" aria-labelledby="entry-title">
+        <h2 class="panel-title" id="entry-title">Client Entry</h2>
 
-<form id="form">
-<input id="name" placeholder="Client Name">
-<input id="phone" placeholder="Phone">
-<input id="state" placeholder="State">
-<input id="city" placeholder="City">
-<textarea id="address" placeholder="Address"></textarea>
-<input id="pin" placeholder="Pin Code">
+        <form id="clientForm" novalidate>
+          <div class="form-area">
+            <div class="form-row four">
+              <div class="field">
+                <label for="clientName">Client Name</label>
+                <input id="clientName" name="clientName" type="text" placeholder="Enter client name" />
+              </div>
+              <div class="field">
+                <label for="contactNumber">Contact Number</label>
+                <input id="contactNumber" name="contactNumber" type="tel" inputmode="tel" placeholder="Enter contact number" />
+              </div>
+              <div class="field">
+                <label for="state">State</label>
+                <select id="state" name="state">
+                  <option value="">Select state</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="city">City</label>
+                <select id="city" name="city" disabled>
+                  <option value="">Select city</option>
+                </select>
+                <input id="cityManual" name="cityManual" class="hidden" type="text" placeholder="Enter city name" />
+                <div class="inline-note">Choose from the list or select Other to enter a city manually.</div>
+              </div>
+            </div>
 
-<button class="primary">Save</button>
-<button type="button" id="clear">Clear</button>
-<button type="button" id="clearAll" class="clear">Clear All</button>
+            <div class="form-row two">
+              <div class="field">
+                <label for="address">Address</label>
+                <textarea id="address" name="address" placeholder="Enter address"></textarea>
+              </div>
+              <div class="field">
+                <label for="pinCode">Pin Code</label>
+                <input id="pinCode" name="pinCode" type="text" inputmode="numeric" placeholder="Enter pin code" />
+              </div>
+            </div>
+          </div>
 
-<br>
+          <div class="actions-row">
+            <button class="primary" type="submit">Save Client</button>
+            <button class="utility" type="button" id="clearFormBtn">Clear Form</button>
+            <button class="clear" type="button" id="clearAllBtn">Clear All</button>
+          </div>
+        </form>
 
-<button type="button" id="export" class="utility">Export</button>
-<button type="button" id="importBtn" class="utility">Import</button>
-<input type="file" id="importFile" hidden>
+        <div class="status-row">
+          <div class="status-message" id="statusMessage">Loading KapsVision mobile web app...</div>
+          <div class="status-path">Storage key: <span id="storageKeyLabel">KapsVision.clients.web</span></div>
+        </div>
+      </section>
 
-</form>
+      <section class="table-panel" aria-labelledby="register-title">
+        <h2 class="panel-title" id="register-title">Saved Client Register</h2>
+        <p class="panel-subtitle">
+          Search and review previously saved client records from the same browser.
+        </p>
 
-<input id="search" placeholder="Search">
+        <div class="search-box">
+          <label class="sr-only" for="searchInput">Search clients</label>
+          <input id="searchInput" type="search" placeholder="Search by name, contact number, state, city, address, or pin code" />
+        </div>
 
-<div id="list"></div>
+        <div class="table-box">
+          <div class="mobile-list" id="mobileList"></div>
+          <div class="desktop-table">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 16%;">Name</th>
+                  <th style="width: 14%;">Contact</th>
+                  <th style="width: 28%;">Address</th>
+                  <th style="width: 12%;">State</th>
+                  <th style="width: 12%;">City</th>
+                  <th style="width: 10%;">Pin</th>
+                  <th style="width: 8%;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="desktopTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-</div>
+  <script src="india-locations.js"></script>
+  <script>
+    (function () {
+      var STORAGE_KEY = "KapsVision.clients.web";
+      var cityStateMap = window.KAPSVISION_INDIA_LOCATIONS || {};
+      var records = [];
+      var form = document.getElementById("clientForm");
+      var searchInput = document.getElementById("searchInput");
+      var statusMessage = document.getElementById("statusMessage");
+      var desktopTableBody = document.getElementById("desktopTableBody");
+      var mobileList = document.getElementById("mobileList");
+      var stateSelect = document.getElementById("state");
+      var citySelect = document.getElementById("city");
+      var cityManual = document.getElementById("cityManual");
 
-<script>
-let STORAGE="kapsvision";
-let data=JSON.parse(localStorage.getItem(STORAGE))||[];
+      function cleanText(value) {
+        return String(value || "").trim();
+      }
 
-let form=document.getElementById("form");
-let list=document.getElementById("list");
-let search=document.getElementById("search");
+      function setStatus(message) {
+        statusMessage.textContent = message;
+      }
 
-function save(){
-  localStorage.setItem(STORAGE,JSON.stringify(data));
-}
+      function populateStates() {
+        Object.keys(cityStateMap).sort().forEach(function (state) {
+          stateSelect.add(new Option(state, state));
+        });
+      }
 
-function render(){
-  let q=search.value.toLowerCase();
+      function loadCities(selectedState, selectedCity) {
+        var cities = cityStateMap[selectedState] || [];
 
-  let filtered=data.filter(d=>
-    Object.values(d).join(" ").toLowerCase().includes(q)
-  );
+        citySelect.innerHTML = "";
+        citySelect.add(new Option("Select city", ""));
+        citySelect.disabled = !cities.length;
 
-  list.innerHTML="";
+        cities.forEach(function (city) {
+          citySelect.add(new Option(city, city));
+        });
 
-  if(!filtered.length){
-    list.innerHTML="<p>No data</p>";
-    return;
-  }
+        if (cities.length) {
+          citySelect.add(new Option("Other / Enter manually", "__OTHER__"));
+        }
 
-  filtered.forEach(d=>{
-    let div=document.createElement("div");
-    div.className="card";
+        cityManual.value = "";
+        cityManual.classList.add("hidden");
 
-    div.innerHTML=`
-      <b>${d.name}</b><br>
-      ${d.phone}<br>
-      ${d.address}<br>
-      ${d.state}, ${d.city} - ${d.pin}<br><br>
+        if (selectedCity) {
+          if (cities.indexOf(selectedCity) !== -1) {
+            citySelect.value = selectedCity;
+          } else {
+            citySelect.value = "__OTHER__";
+            cityManual.value = selectedCity;
+            cityManual.classList.remove("hidden");
+          }
+        }
+      }
 
-      <button onclick="edit('${d.id}')">Edit</button>
-      <button onclick="del('${d.id}')" class="clear">Delete</button>
-    `;
+      function getSelectedCity() {
+        if (citySelect.value === "__OTHER__") {
+          return cleanText(cityManual.value);
+        }
 
-    list.appendChild(div);
-  });
-}
+        return cleanText(citySelect.value);
+      }
 
-function isDuplicate(newData){
-  return data.some(d =>
-    d.name.toLowerCase()===newData.name.toLowerCase() &&
-    d.phone===newData.phone
-  );
-}
+      function toggleManualCity() {
+        if (citySelect.value === "__OTHER__") {
+          cityManual.classList.remove("hidden");
+          cityManual.focus();
+        } else {
+          cityManual.value = "";
+          cityManual.classList.add("hidden");
+        }
+      }
 
-form.onsubmit=e=>{
-  e.preventDefault();
+      function countUnique(values) {
+        var unique = {};
+        var count = 0;
+        values.forEach(function (value) {
+          var key = cleanText(value).toLowerCase();
+          if (key && !unique[key]) {
+            unique[key] = true;
+            count += 1;
+          }
+        });
+        return count;
+      }
 
-  let d={
-    id:Date.now()+"",
-    name:name.value.trim(),
-    phone:phone.value.trim(),
-    state:state.value.trim(),
-    city:city.value.trim(),
-    address:address.value.trim(),
-    pin:pin.value.trim()
-  };
+      function getFormData() {
+        return {
+          clientName: cleanText(document.getElementById("clientName").value),
+          contactNumber: cleanText(document.getElementById("contactNumber").value),
+          address: cleanText(document.getElementById("address").value),
+          state: cleanText(stateSelect.value),
+          city: getSelectedCity(),
+          pinCode: cleanText(document.getElementById("pinCode").value)
+        };
+      }
 
-  if(Object.values(d).some(v=>!v)){
-    alert("Fill all fields");
-    return;
-  }
+      function resetForm() {
+        form.reset();
+        stateSelect.value = "";
+        loadCities("", "");
+        document.getElementById("clientName").focus();
+      }
 
-  if(isDuplicate(d)){
-    alert("Duplicate client");
-    return;
-  }
+      function saveRecords() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+      }
 
-  data.unshift(d);
-  save();
-  render();
-  form.reset();
-};
+      function loadRecords() {
+        try {
+          var saved = localStorage.getItem(STORAGE_KEY);
+          records = saved ? JSON.parse(saved) : [];
+          if (!Array.isArray(records)) {
+            records = [];
+          }
+          setStatus("Application ready. " + records.length + " client record(s) loaded.");
+        } catch (error) {
+          records = [];
+          setStatus("Saved client data could not be read, so the app started empty.");
+        }
+      }
 
-function del(id){
-  data=data.filter(d=>d.id!==id);
-  save();
-  render();
-}
+      function escapeHtml(value) {
+        return cleanText(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
 
-function edit(id){
-  let d=data.find(x=>x.id===id);
+      function buildRecordHtml(record) {
+        return (
+          '<article class="record-card">' +
+            '<div class="record-top">' +
+              '<h3 class="record-name">' + escapeHtml(record.clientName) + "</h3>" +
+              '<div class="record-date">' + escapeHtml(new Date(record.createdAt).toLocaleDateString()) + "</div>" +
+            "</div>" +
+            '<div class="detail-grid">' +
+              buildDetail("Contact Number", record.contactNumber) +
+              buildDetail("Address", record.address) +
+              buildDetail("State", record.state) +
+              buildDetail("City", record.city) +
+              buildDetail("Pin Code", record.pinCode) +
+            "</div>" +
+            '<div class="record-actions">' +
+              '<button class="delete-btn" type="button" data-delete-id="' + escapeHtml(record.id) + '">Delete</button>' +
+            "</div>" +
+          "</article>"
+        );
+      }
 
-  name.value=d.name;
-  phone.value=d.phone;
-  state.value=d.state;
-  city.value=d.city;
-  address.value=d.address;
-  pin.value=d.pin;
+      function buildDetail(label, value) {
+        return (
+          '<div class="detail">' +
+            '<div class="detail-label">' + escapeHtml(label) + "</div>" +
+            '<div class="detail-value">' + escapeHtml(value) + "</div>" +
+          "</div>"
+        );
+      }
 
-  del(id);
-}
+      function renderSummary(filteredRecords) {
+        document.getElementById("totalClients").textContent = String(records.length);
+        document.getElementById("statesCovered").textContent = String(countUnique(records.map(function (record) {
+          return record.state;
+        })));
+        document.getElementById("citiesCovered").textContent = String(countUnique(records.map(function (record) {
+          return record.city;
+        })));
 
-document.getElementById("clear").onclick=()=>form.reset();
+        if (searchInput.value.trim()) {
+          setStatus(filteredRecords.length + " matching client record(s) shown.");
+        }
+      }
 
-document.getElementById("clearAll").onclick=()=>{
-  if(confirm("Delete all?")){
-    data=[];
-    save();
-    render();
-  }
-};
+      function renderRecords() {
+        var query = cleanText(searchInput.value).toLowerCase();
+        var filteredRecords = records.filter(function (record) {
+          if (!query) {
+            return true;
+          }
 
-search.oninput=render;
+          return [
+            record.clientName,
+            record.contactNumber,
+            record.address,
+            record.state,
+            record.city,
+            record.pinCode
+          ].join(" ").toLowerCase().indexOf(query) !== -1;
+        });
 
-// EXPORT
-document.getElementById("export").onclick=()=>{
-  let blob=new Blob([JSON.stringify(data,null,2)]);
-  let a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="clients.json";
-  a.click();
-};
+        renderSummary(filteredRecords);
 
-// IMPORT
-document.getElementById("importBtn").onclick=()=>{
-  document.getElementById("importFile").click();
-};
+        if (!filteredRecords.length) {
+          desktopTableBody.innerHTML =
+            '<tr><td colspan="7" class="empty-row">No client records match the current search.</td></tr>';
+          mobileList.innerHTML =
+            '<div class="empty-row">No client records match the current search.</div>';
+          return;
+        }
 
-document.getElementById("importFile").onchange=e=>{
-  let file=e.target.files[0];
-  let reader=new FileReader();
+        desktopTableBody.innerHTML = filteredRecords.map(function (record) {
+          return (
+            "<tr>" +
+              '<td class="table-name">' + escapeHtml(record.clientName) + "</td>" +
+              "<td>" + escapeHtml(record.contactNumber) + "</td>" +
+              "<td>" + escapeHtml(record.address) + "</td>" +
+              "<td>" + escapeHtml(record.state) + "</td>" +
+              "<td>" + escapeHtml(record.city) + "</td>" +
+              "<td>" + escapeHtml(record.pinCode) + "</td>" +
+              '<td><button class="delete-btn" type="button" data-delete-id="' + escapeHtml(record.id) + '">Delete</button></td>' +
+            "</tr>"
+          );
+        }).join("");
 
-  reader.onload=ev=>{
-    let imported=JSON.parse(ev.target.result);
-    data=imported.concat(data);
-    save();
-    render();
-  };
+        mobileList.innerHTML = filteredRecords.map(buildRecordHtml).join("");
+      }
 
-  reader.readAsText(file);
-};
+      function deleteRecord(id) {
+        var nextRecords = records.filter(function (record) {
+          return record.id !== id;
+        });
 
-render();
-</script>
+        if (nextRecords.length === records.length) {
+          return;
+        }
 
+        records = nextRecords;
+        saveRecords();
+        renderRecords();
+        setStatus("Client record deleted.");
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var data = getFormData();
+        var values = Object.keys(data).map(function (key) {
+          return data[key];
+        });
+
+        if (values.some(function (value) { return !value; })) {
+          setStatus("Please enter all client details before saving.");
+          return;
+        }
+
+        records.unshift({
+          id: String(Date.now()),
+          createdAt: new Date().toISOString(),
+          clientName: data.clientName,
+          contactNumber: data.contactNumber,
+          address: data.address,
+          state: data.state,
+          city: data.city,
+          pinCode: data.pinCode
+        });
+
+        saveRecords();
+        renderRecords();
+        resetForm();
+        setStatus("Client saved for future reference.");
+      });
+
+      document.getElementById("clearFormBtn").addEventListener("click", function () {
+        resetForm();
+        setStatus("Form cleared. Ready for the next client.");
+      });
+
+      document.getElementById("clearAllBtn").addEventListener("click", function () {
+        if (!records.length) {
+          setStatus("There are no client records to clear.");
+          return;
+        }
+
+        if (!window.confirm("Clear all saved client records?")) {
+          return;
+        }
+
+        records = [];
+        saveRecords();
+        renderRecords();
+        setStatus("All client records cleared.");
+      });
+
+      searchInput.addEventListener("input", renderRecords);
+      stateSelect.addEventListener("change", function () {
+        loadCities(stateSelect.value, "");
+      });
+      citySelect.addEventListener("change", toggleManualCity);
+
+      document.addEventListener("click", function (event) {
+        var target = event.target;
+        if (target && target.getAttribute("data-delete-id")) {
+          deleteRecord(target.getAttribute("data-delete-id"));
+        }
+      });
+
+      document.getElementById("storageKeyLabel").textContent = STORAGE_KEY;
+      populateStates();
+      loadCities("", "");
+      loadRecords();
+      renderRecords();
+    }());
+  </script>
 </body>
 </html>
