@@ -7,20 +7,19 @@
 <title>KapsVision Client Register</title>
 
 <!-- PWA + iOS -->
-<link rel="manifest" href="manifest.json" />
-<link rel="apple-touch-icon" href="logo.png" />
-<meta name="theme-color" content="#14324a" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-<meta name="apple-mobile-web-app-title" content="KapsVision" />
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#14324a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <style>
 body{
   margin:0;
   font-family:Segoe UI;
   background:#efe8dc;
+  padding:15px;
   padding-bottom:env(safe-area-inset-bottom);
-  padding-top:env(safe-area-inset-top);
 }
 
 /* iOS zoom fix */
@@ -28,28 +27,14 @@ input,textarea,select{
   font-size:16px;
 }
 
-/* SIMPLE CLEAN UI */
-.header{
-  background:#10283f;
-  color:#fff;
-  padding:15px;
-  display:flex;
-  align-items:center;
-  gap:15px;
-}
-
-.header img{
-  width:60px;
-}
-
-.container{
-  padding:15px;
+h2{
+  margin:0 0 10px;
 }
 
 input,select,textarea{
   width:100%;
   padding:10px;
-  margin-top:6px;
+  margin-top:8px;
   border-radius:8px;
   border:1px solid #ccc;
 }
@@ -64,31 +49,26 @@ button{
   font-weight:bold;
 }
 
-.list{
-  margin-top:20px;
+button:hover{
+  opacity:.9;
+}
+
+.delete{
+  background:#cf5b49;
 }
 
 .card{
   background:#fff;
   padding:10px;
-  margin-bottom:10px;
+  margin-top:10px;
   border-radius:10px;
-}
-
-.delete{
-  background:red;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-  <img src="logo.png">
-  <h2>KapsVision</h2>
-</div>
-
-<div class="container">
+<h2>KapsVision</h2>
 
 <input id="name" placeholder="Client Name">
 <input id="phone" placeholder="Contact Number">
@@ -97,45 +77,51 @@ button{
 <textarea id="address" placeholder="Address"></textarea>
 <input id="pin" placeholder="Pin Code">
 
-<button onclick="save()">Save Client</button>
+<button onclick="save()">Save</button>
 <button onclick="exportData()">Export</button>
 <button onclick="document.getElementById('file').click()">Import</button>
 <input type="file" id="file" hidden>
 
-<div class="list" id="list"></div>
-
-</div>
+<div id="list"></div>
 
 <script>
-let records = JSON.parse(localStorage.getItem("kaps")) || [];
+const STORAGE="kaps.clients";
+let records = JSON.parse(localStorage.getItem(STORAGE)) || [];
 
+/* SAVE */
 function save(){
-  let data = {
-    id: Date.now(),
-    name: name.value.trim(),
-    phone: phone.value.trim(),
-    state: state.value.trim(),
-    city: city.value.trim(),
-    address: address.value.trim(),
-    pin: pin.value.trim()
+  let data={
+    id:Date.now(),
+    name:name.value.trim(),
+    phone:phone.value.trim(),
+    state:state.value.trim(),
+    city:city.value.trim(),
+    address:address.value.trim(),
+    pin:pin.value.trim()
   };
 
-  if(!data.name || data.phone.length!=10){
-    alert("Enter valid details");
+  if(data.name.length<3){
+    alert("Enter valid name");
+    return;
+  }
+
+  if(!/^[0-9]{10}$/.test(data.phone)){
+    alert("Enter valid 10-digit number");
+    return;
+  }
+
+  if(!/^[0-9]{6}$/.test(data.pin)){
+    alert("Enter valid PIN");
     return;
   }
 
   records.unshift(data);
-  localStorage.setItem("kaps", JSON.stringify(records));
-
+  localStorage.setItem(STORAGE, JSON.stringify(records));
   clearForm();
   render();
 }
 
-function clearForm(){
-  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
-}
-
+/* RENDER */
 function render(){
   list.innerHTML = records.map(r=>`
     <div class="card">
@@ -144,32 +130,54 @@ function render(){
       ${r.city}, ${r.state}<br>
       ${r.address}<br>
       ${r.pin}<br><br>
+      <button onclick="edit(${r.id})">Edit</button>
       <button class="delete" onclick="del(${r.id})">Delete</button>
     </div>
   `).join("");
 }
 
+/* DELETE */
 function del(id){
   records = records.filter(r=>r.id!==id);
-  localStorage.setItem("kaps", JSON.stringify(records));
+  localStorage.setItem(STORAGE, JSON.stringify(records));
   render();
+}
+
+/* EDIT */
+function edit(id){
+  let r = records.find(x=>x.id===id);
+  if(!r) return;
+
+  name.value=r.name;
+  phone.value=r.phone;
+  state.value=r.state;
+  city.value=r.city;
+  address.value=r.address;
+  pin.value=r.pin;
+
+  del(id);
+}
+
+/* CLEAR */
+function clearForm(){
+  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
 }
 
 /* EXPORT */
 function exportData(){
-  const blob = new Blob([JSON.stringify(records)], {type:"application/json"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  const blob=new Blob([JSON.stringify(records,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
   a.download="clients.json";
   a.click();
 }
 
 /* IMPORT */
-file.onchange = function(){
-  const reader = new FileReader();
-  reader.onload = function(){
-    records = JSON.parse(reader.result);
-    localStorage.setItem("kaps", JSON.stringify(records));
+file.onchange=function(){
+  const reader=new FileReader();
+  reader.onload=function(){
+    records=JSON.parse(reader.result);
+    localStorage.setItem(STORAGE, JSON.stringify(records));
     render();
   };
   reader.readAsText(this.files[0]);
