@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#14324a" />
 
-  <!-- iOS PWA -->
+  <!-- iOS PWA Support -->
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="KapsVision">
   <link rel="apple-touch-icon" href="logo.png">
 
@@ -16,9 +17,26 @@
   <style>
     :root {
       --shell: #efe8dc;
+      --card: #ffffff;
+      --ink: #10283f;
+      --body: #24384a;
+      --muted: #6a7a89;
+      --soft: #f7fafc;
+      --soft-2: #fbfcfd;
+      --line: #dbe4eb;
       --blue: #1f6f9a;
+      --gold: #d9b15f;
+      --gold-deep: #b98522;
+      --royal-night: #0b1f33;
+      --royal-navy: #112e49;
+      --green: #4b8a2f;
+      --red: #cf5b49;
       --shadow: 0 16px 34px rgba(20, 50, 74, 0.08);
+      --radius-lg: 18px;
+      --radius-sm: 10px;
     }
+
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -26,18 +44,11 @@
       background: var(--shell);
     }
 
-    /* ===== GOLDEN GLITTER STARS ===== */
-
-    @keyframes goldenTwinkle {
-      0% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
-      50% { opacity: 1; transform: scale(1.4) rotate(20deg); }
-      100% { opacity: 0.2; transform: scale(0.8) rotate(0deg); }
-    }
-
-    @keyframes goldenFloat {
-      0% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0); }
+    /* ===== SHINING STARS ===== */
+    @keyframes shiningStars {
+      0% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 0.9; transform: scale(1.2); }
+      100% { opacity: 0.2; transform: scale(0.8); }
     }
 
     .watermark-sparkles {
@@ -51,45 +62,32 @@
       content: "";
       position: absolute;
       inset: 0;
-
       background-image:
-        radial-gradient(circle, rgba(255,223,120,0.95) 0 1.5px, transparent 2px),
-        radial-gradient(circle, rgba(255,200,80,0.85) 0 2px, transparent 2.5px);
-
+        radial-gradient(circle, rgba(255,255,255,0.9) 0 1.5px, transparent 2px),
+        radial-gradient(circle, rgba(255,240,200,0.8) 0 2px, transparent 2.5px);
       background-size: 120px 120px, 180px 180px;
       background-position: 10% 20%, 80% 30%;
-
-      filter: drop-shadow(0 0 6px rgba(255,215,120,0.8));
-
-      animation: goldenTwinkle 4s infinite, goldenFloat 8s infinite;
+      animation: shiningStars 4s infinite;
     }
 
     .watermark-sparkles::after {
       content: "";
       position: absolute;
       inset: 0;
-
       background-image:
-        radial-gradient(circle, rgba(255,240,180,0.95) 0 1.2px, transparent 2px),
-        radial-gradient(circle, rgba(255,210,120,0.85) 0 1.6px, transparent 2px);
-
+        radial-gradient(circle, rgba(255,255,255,0.95) 0 1.2px, transparent 2px),
+        radial-gradient(circle, rgba(255,245,210,0.85) 0 1.6px, transparent 2px);
       background-size: 160px 160px, 220px 220px;
       background-position: 60% 10%, 30% 85%;
-
-      filter: drop-shadow(0 0 6px rgba(255,215,120,0.8));
-
-      animation: goldenTwinkle 6s infinite, goldenFloat 10s infinite;
+      animation: shiningStars 6s infinite;
     }
 
     /* ===== HEADER ===== */
-
     .header {
       background: linear-gradient(145deg, #0b1f33, #112e49);
       color: white;
       padding: 1rem;
       text-align: center;
-      position: relative;
-      z-index: 1;
     }
 
     .title {
@@ -97,20 +95,17 @@
       font-size: 2rem;
     }
 
-    /* ===== CONTENT ===== */
-
+    /* ===== FORM ===== */
     .content {
       padding: 1rem;
       max-width: 900px;
       margin: auto;
-      position: relative;
-      z-index: 1;
     }
 
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 0.7rem;
-      margin-top: 0.5rem;
+      margin-top: 0.4rem;
       border-radius: 8px;
       border: 1px solid #ccc;
     }
@@ -118,8 +113,8 @@
     button {
       margin-top: 1rem;
       padding: 0.7rem 1rem;
-      border-radius: 20px;
       border: none;
+      border-radius: 20px;
       background: var(--blue);
       color: white;
       font-weight: bold;
@@ -133,6 +128,7 @@
       border-radius: 12px;
       box-shadow: var(--shadow);
     }
+
   </style>
 </head>
 
@@ -147,12 +143,12 @@
 <main class="content">
 
 <form id="clientForm">
-  <input id="clientName" placeholder="Client Name" required>
-  <input id="contactNumber" placeholder="Contact Number" required>
-  <input id="state" placeholder="State" required>
-  <input id="city" placeholder="City" required>
-  <textarea id="address" placeholder="Address" required></textarea>
-  <input id="pinCode" placeholder="Pin Code" required>
+  <input id="clientName" placeholder="Client Name">
+  <input id="contactNumber" placeholder="Contact Number">
+  <input id="state" placeholder="State">
+  <input id="city" placeholder="City">
+  <textarea id="address" placeholder="Address"></textarea>
+  <input id="pinCode" placeholder="Pin Code">
 
   <button type="submit">Save Client</button>
 </form>
@@ -217,6 +213,7 @@ document.getElementById("clientForm").addEventListener("submit", e => {
 load();
 </script>
 
+<!-- Service Worker -->
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js");
