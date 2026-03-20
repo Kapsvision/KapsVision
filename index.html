@@ -165,13 +165,19 @@
 const STORAGE_KEY = "KapsVision.clients.web";
 let records = [];
 
-function load() {
-  try {
-    records = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    records = [];
-  }
-  render();
+function load(){
+  db.collection("clients").onSnapshot(snapshot=>{
+    data = [];
+
+    snapshot.forEach(doc=>{
+      data.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    render();
+  });
 }
 
 function save() {
