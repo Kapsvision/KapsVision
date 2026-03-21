@@ -3,211 +3,192 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
 <title>KapsVision Client Register</title>
 
+<!-- PWA + iOS -->
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="logo.png">
+<meta name="theme-color" content="#14324a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
-:root {
-  --shell:#efe8dc;
-  --card:#ffffff;
-  --ink:#14324a;
-  --body:#24384a;
-  --muted:#6a7a89;
-  --soft:#f7fafc;
-  --soft-2:#fbfcfd;
-  --line:#dbe4eb;
-  --blue:#1f6f9a;
-  --gold:#d7a750;
-  --gold-deep:#c28725;
-  --green:#4b8a2f;
-  --red:#cf5b49;
-  --shadow:0 16px 34px rgba(20,50,74,0.08);
-}
-
-*{box-sizing:border-box;}
-
 body{
   margin:0;
-  font-family:"Segoe UI",Tahoma,sans-serif;
-  background:var(--shell);
-  color:var(--body);
+  font-family:Segoe UI;
+  background:#efe8dc;
+  padding:15px;
+  padding-bottom:env(safe-area-inset-bottom);
 }
 
-/* APP BACKGROUND */
-.app-shell{
-  min-height:100vh;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(255,231,170,0.95), transparent 20rem),
-    radial-gradient(circle at 88% 6%, rgba(215,167,80,0.38), transparent 22rem),
-    var(--shell);
+/* iOS zoom fix */
+input,textarea,select{
+  font-size:16px;
 }
 
-/* HEADER */
-.header{
-  background:linear-gradient(145deg,#10283b,#14324a,#1a3950);
-  color:#fff;
-  border-bottom:4px solid var(--gold);
-  padding:1.4rem 1rem;
+h2{
+  margin:0 0 10px;
 }
 
-/* UPDATED SPACING */
-.header-inner{
-  width:min(1100px,100%);
-  margin:auto;
-  display:grid;
-  grid-template-columns:112px 1fr;
-  gap:1.5rem; /* FIXED SPACING */
-  align-items:center;
-}
-
-/* LOGO PANEL FIXED */
-.logo-panel{
-  width:112px;
-  height:112px;
-  display:grid;
-  place-items:center;
-  background:transparent; /* removed box */
-  box-shadow:none;
-}
-
-/* PREMIUM LOGO */
-.logo-panel img{
-  width:132px;
-  filter:
-    drop-shadow(0 10px 18px rgba(0,0,0,0.25))
-    drop-shadow(0 0 20px rgba(215,167,80,0.35));
-}
-
-.title{
-  margin:0;
-  font-size:2.2rem;
-  font-family:Georgia,serif;
-}
-
-/* CONTENT */
-.content{
-  width:min(1100px,95%);
-  margin:1rem auto;
-}
-
-/* CARD */
-.summary-card,.panel{
-  background:#fff;
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  padding:1rem;
-  margin-bottom:1rem;
-}
-
-/* FORM */
-.field input,.field textarea{
+input,select,textarea{
   width:100%;
-  padding:0.8rem;
-  border-radius:10px;
+  padding:10px;
+  margin-top:8px;
+  border-radius:8px;
   border:1px solid #ccc;
 }
 
-/* BUTTONS */
 button{
-  padding:0.8rem 1rem;
+  margin-top:10px;
+  padding:10px;
   border:none;
-  border-radius:999px;
+  border-radius:20px;
+  background:#1f6f9a;
   color:#fff;
-  cursor:pointer;
+  font-weight:bold;
 }
 
-.primary{background:var(--blue);}
-.utility{background:#556573;}
-.clear{background:var(--red);}
+button:hover{
+  opacity:.9;
+}
 
-/* RESPONSIVE */
-@media(min-width:720px){
-  .header-inner{
-    grid-template-columns:144px 1fr;
-    gap:2rem;
-  }
+.delete{
+  background:#cf5b49;
+}
 
-  .logo-panel{
-    width:144px;
-    height:144px;
-  }
-
-  .logo-panel img{
-    width:170px;
-  }
+.card{
+  background:#fff;
+  padding:10px;
+  margin-top:10px;
+  border-radius:10px;
 }
 </style>
 </head>
 
 <body>
 
-<div class="app-shell">
+<h2>KapsVision</h2>
 
-<header class="header">
-  <div class="header-inner">
-    
-    <div class="logo-panel">
-      <img src="logo.png" alt="KapsVision Logo">
-    </div>
-
-    <h1 class="title">KapsVision</h1>
-
-  </div>
-</header>
-
-<main class="content">
-
-<div class="summary-card">
-  <b>Total Clients:</b> <span id="totalClients">0</span>
-</div>
-
-<div class="panel">
-<form id="clientForm">
-
-<div class="field">
-<input id="clientName" placeholder="Client Name">
-</div>
-
-<div class="field">
-<input id="contactNumber" placeholder="Contact Number">
-</div>
-
-<div class="field">
+<input id="name" placeholder="Client Name">
+<input id="phone" placeholder="Contact Number">
+<input id="state" placeholder="State">
+<input id="city" placeholder="City">
 <textarea id="address" placeholder="Address"></textarea>
-</div>
+<input id="pin" placeholder="Pin Code">
 
-<button class="primary">Save Client</button>
-<button type="button" class="clear" id="clearAll">Clear All</button>
+<button onclick="save()">Save</button>
+<button onclick="exportData()">Export</button>
+<button onclick="document.getElementById('file').click()">Import</button>
+<input type="file" id="file" hidden>
 
-</form>
-</div>
-
-</main>
-</div>
+<div id="list"></div>
 
 <script>
-let records=[];
-const form=document.getElementById("clientForm");
+const STORAGE="kaps.clients";
+let records = JSON.parse(localStorage.getItem(STORAGE)) || [];
 
-form.addEventListener("submit",e=>{
-e.preventDefault();
+/* SAVE */
+function save(){
+  let data={
+    id:Date.now(),
+    name:name.value.trim(),
+    phone:phone.value.trim(),
+    state:state.value.trim(),
+    city:city.value.trim(),
+    address:address.value.trim(),
+    pin:pin.value.trim()
+  };
 
-records.push({
-name:clientName.value,
-contact:contactNumber.value,
-address:address.value
-});
+  if(data.name.length<3){
+    alert("Enter valid name");
+    return;
+  }
 
-localStorage.setItem("clients",JSON.stringify(records));
-document.getElementById("totalClients").innerText=records.length;
+  if(!/^[0-9]{10}$/.test(data.phone)){
+    alert("Enter valid 10-digit number");
+    return;
+  }
 
-form.reset();
-});
+  if(!/^[0-9]{6}$/.test(data.pin)){
+    alert("Enter valid PIN");
+    return;
+  }
 
-document.getElementById("clearAll").onclick=()=>{
-records=[];
-localStorage.clear();
-document.getElementById("totalClients").innerText=0;
-};
+  records.unshift(data);
+  localStorage.setItem(STORAGE, JSON.stringify(records));
+  clearForm();
+  render();
+}
+
+/* RENDER */
+function render(){
+  list.innerHTML = records.map(r=>`
+    <div class="card">
+      <b>${r.name}</b><br>
+      ${r.phone}<br>
+      ${r.city}, ${r.state}<br>
+      ${r.address}<br>
+      ${r.pin}<br><br>
+      <button onclick="edit(${r.id})">Edit</button>
+      <button class="delete" onclick="del(${r.id})">Delete</button>
+    </div>
+  `).join("");
+}
+
+/* DELETE */
+function del(id){
+  records = records.filter(r=>r.id!==id);
+  localStorage.setItem(STORAGE, JSON.stringify(records));
+  render();
+}
+
+/* EDIT */
+function edit(id){
+  let r = records.find(x=>x.id===id);
+  if(!r) return;
+
+  name.value=r.name;
+  phone.value=r.phone;
+  state.value=r.state;
+  city.value=r.city;
+  address.value=r.address;
+  pin.value=r.pin;
+
+  del(id);
+}
+
+/* CLEAR */
+function clearForm(){
+  document.querySelectorAll("input,textarea").forEach(e=>e.value="");
+}
+
+/* EXPORT */
+function exportData(){
+  const blob=new Blob([JSON.stringify(records,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="clients.json";
+  a.click();
+}
+
+/* IMPORT */
+file.onchange=function(){
+  const reader=new FileReader();
+  reader.onload=function(){
+    records=JSON.parse(reader.result);
+    localStorage.setItem(STORAGE, JSON.stringify(records));
+    render();
+  };
+  reader.readAsText(this.files[0]);
+}
+
+/* SERVICE WORKER */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+
+render();
 </script>
 
 </body>
