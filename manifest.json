@@ -1,15 +1,15 @@
 {
-  "name": "KapsVision Client Register",
+  "name": "KapsVision CRM",
   "short_name": "KapsVision",
-  "icons": [
-    {
-      "src": "logo-180.png",
-      "sizes": "180x180",
-      "type": "image/png"
-    }
-  ],
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#14324a",
-  "theme_color": "#14324a"
+  "theme_color": "#14324a",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "logo/png"
+    }
+  ]
 }
