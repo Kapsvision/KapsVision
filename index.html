@@ -1295,6 +1295,18 @@
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
+<script>
+let typingTimer;
+
+function handleInput(e) {
+  clearTimeout(typingTimer);
+
+  typingTimer = setTimeout(() => {
+    console.log("Typing stopped:", e.value);
+
+    // Example: save, search, render
+  }, 300);
+}
 </script>
 
 </body>
