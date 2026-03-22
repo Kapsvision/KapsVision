@@ -986,316 +986,135 @@
 
   <script src="india-locations.js"></script>
   <script>
-    (function () {
-      var STORAGE_KEY = "KapsVision.clients.web";
-      var cityStateMap = window.KAPSVISION_INDIA_LOCATIONS || {};
-      var records = [];
-      var form = document.getElementById("clientForm");
-      var searchInput = document.getElementById("searchInput");
-      var statusMessage = document.getElementById("statusMessage");
-      var desktopTableBody = document.getElementById("desktopTableBody");
-      var mobileList = document.getElementById("mobileList");
-      var stateSelect = document.getElementById("state");
-      var citySelect = document.getElementById("city");
-      var cityManual = document.getElementById("cityManual");
+(function () {
+  var STORAGE_KEY = "KapsVision.clients.web";
+  var cityStateMap = window.KAPSVISION_INDIA_LOCATIONS || {};
+  var records = [];
 
-      function cleanText(value) {
-        return String(value || "").trim();
-      }
+  var form = document.getElementById("clientForm");
+  var searchInput = document.getElementById("searchInput");
+  var statusMessage = document.getElementById("statusMessage");
+  var desktopTableBody = document.getElementById("desktopTableBody");
+  var mobileList = document.getElementById("mobileList");
+  var stateSelect = document.getElementById("state");
+  var citySelect = document.getElementById("city");
+  var cityManual = document.getElementById("cityManual");
 
-      function setStatus(message) {
-        statusMessage.textContent = message;
-      }
+  function cleanText(value) {
+    return String(value || "").trim();
+  }
 
-      function populateStates() {
-        Object.keys(cityStateMap).sort().forEach(function (state) {
-          stateSelect.add(new Option(state, state));
-        });
-      }
+  function setStatus(message) {
+    statusMessage.textContent = message;
+  }
 
-      function loadCities(selectedState, selectedCity) {
-        var cities = cityStateMap[selectedState] || [];
+  function saveRecords() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+  }
 
-        citySelect.innerHTML = "";
-        citySelect.add(new Option("Select city", ""));
-        citySelect.disabled = !cities.length;
+  function loadRecords() {
+    try {
+      var saved = localStorage.getItem(STORAGE_KEY);
+      records = saved ? JSON.parse(saved) : [];
+      if (!Array.isArray(records)) records = [];
+    } catch {
+      records = [];
+    }
+  }
 
-        cities.forEach(function (city) {
-          citySelect.add(new Option(city, city));
-        });
+  function renderRecords() {
+    var query = cleanText(searchInput.value).toLowerCase();
 
-        if (cities.length) {
-          citySelect.add(new Option("Other / Enter manually", "__OTHER__"));
-        }
+    var filtered = records.filter(function (r) {
+      if (!query) return true;
+      return (r.clientName + r.contactNumber + r.address + r.state + r.city + r.pinCode)
+        .toLowerCase()
+        .includes(query);
+    });
 
-        cityManual.value = "";
-        cityManual.classList.add("hidden");
+    if (!filtered.length) {
+      desktopTableBody.innerHTML = `<tr><td colspan="7">No records</td></tr>`;
+      mobileList.innerHTML = `<div>No records</div>`;
+      return;
+    }
 
-        if (selectedCity) {
-          if (cities.indexOf(selectedCity) !== -1) {
-            citySelect.value = selectedCity;
-          } else {
-            citySelect.value = "__OTHER__";
-            cityManual.value = selectedCity;
-            cityManual.classList.remove("hidden");
-          }
-        }
-      }
+    desktopTableBody.innerHTML = filtered.map(r => `
+      <tr>
+        <td>${r.clientName}</td>
+        <td>${r.contactNumber}</td>
+        <td>${r.address}</td>
+        <td>${r.state}</td>
+        <td>${r.city}</td>
+        <td>${r.pinCode}</td>
+        <td><button data-id="${r.id}">Delete</button></td>
+      </tr>
+    `).join("");
 
-      function getSelectedCity() {
-        if (citySelect.value === "__OTHER__") {
-          return cleanText(cityManual.value);
-        }
+    mobileList.innerHTML = filtered.map(r => `
+      <div>
+        <b>${r.clientName}</b><br>
+        ${r.contactNumber}<br>
+        ${r.city}, ${r.state}
+      </div>
+    `).join("");
+  }
 
-        return cleanText(citySelect.value);
-      }
+  // ✅ FIXED SEARCH (NO LAG)
+  let searchTimer;
+  let lastSearch = "";
 
-      function toggleManualCity() {
-        if (citySelect.value === "__OTHER__") {
-          cityManual.classList.remove("hidden");
-          cityManual.focus();
-        } else {
-          cityManual.value = "";
-          cityManual.classList.add("hidden");
-        }
-      }
+  searchInput.addEventListener("input", function (e) {
+    const value = e.target.value;
 
-      function countUnique(values) {
-        var unique = {};
-        var count = 0;
-        values.forEach(function (value) {
-          var key = cleanText(value).toLowerCase();
-          if (key && !unique[key]) {
-            unique[key] = true;
-            count += 1;
-          }
-        });
-        return count;
-      }
+    if (value === lastSearch) return;
+    lastSearch = value;
 
-      function getFormData() {
-        return {
-          clientName: cleanText(document.getElementById("clientName").value),
-          contactNumber: cleanText(document.getElementById("contactNumber").value),
-          address: cleanText(document.getElementById("address").value),
-          state: cleanText(stateSelect.value),
-          city: getSelectedCity(),
-          pinCode: cleanText(document.getElementById("pinCode").value)
-        };
-      }
+    requestAnimationFrame(() => {});
 
-      function resetForm() {
-        form.reset();
-        stateSelect.value = "";
-        loadCities("", "");
-        document.getElementById("clientName").focus();
-      }
-
-      function saveRecords() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-      }
-
-      function loadRecords() {
-        try {
-          var saved = localStorage.getItem(STORAGE_KEY);
-          records = saved ? JSON.parse(saved) : [];
-          if (!Array.isArray(records)) {
-            records = [];
-          }
-          setStatus("Application ready. " + records.length + " client record(s) loaded.");
-        } catch (error) {
-          records = [];
-          setStatus("Saved client data could not be read, so the app started empty.");
-        }
-      }
-
-      function escapeHtml(value) {
-        return cleanText(value)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/\"/g, "&quot;")
-          .replace(/'/g, "&#39;");
-      }
-
-      function buildRecordHtml(record) {
-        return (
-          '<article class="record-card">' +
-            '<div class="record-top">' +
-              '<h3 class="record-name">' + escapeHtml(record.clientName) + "</h3>" +
-              '<div class="record-date">' + escapeHtml(new Date(record.createdAt).toLocaleDateString()) + "</div>" +
-            "</div>" +
-            '<div class="detail-grid">' +
-              buildDetail("Contact Number", record.contactNumber) +
-              buildDetail("Address", record.address) +
-              buildDetail("State", record.state) +
-              buildDetail("City", record.city) +
-              buildDetail("Pin Code", record.pinCode) +
-            "</div>" +
-            '<div class="record-actions">' +
-              '<button class="delete-btn" type="button" data-delete-id="' + escapeHtml(record.id) + '">Delete</button>' +
-            "</div>" +
-          "</article>"
-        );
-      }
-
-      function buildDetail(label, value) {
-        return (
-          '<div class="detail">' +
-            '<div class="detail-label">' + escapeHtml(label) + "</div>" +
-            '<div class="detail-value">' + escapeHtml(value) + "</div>" +
-          "</div>"
-        );
-      }
-
-      function renderSummary(filteredRecords) {
-        document.getElementById("totalClients").textContent = String(records.length);
-        document.getElementById("statesCovered").textContent = String(countUnique(records.map(function (record) {
-          return record.state;
-        })));
-        document.getElementById("citiesCovered").textContent = String(countUnique(records.map(function (record) {
-          return record.city;
-        })));
-
-        if (searchInput.value.trim()) {
-          setStatus(filteredRecords.length + " matching client record(s) shown.");
-        }
-      }
-
-      function renderRecords() {
-        var query = cleanText(searchInput.value).toLowerCase();
-        var filteredRecords = records.filter(function (record) {
-          if (!query) {
-            return true;
-          }
-
-          return [
-            record.clientName,
-            record.contactNumber,
-            record.address,
-            record.state,
-            record.city,
-            record.pinCode
-          ].join(" ").toLowerCase().indexOf(query) !== -1;
-        });
-
-        renderSummary(filteredRecords);
-
-        if (!filteredRecords.length) {
-          desktopTableBody.innerHTML =
-            '<tr><td colspan="7" class="empty-row">No client records match the current search.</td></tr>';
-          mobileList.innerHTML =
-            '<div class="empty-row">No client records match the current search.</div>';
-          return;
-        }
-
-        desktopTableBody.innerHTML = filteredRecords.map(function (record) {
-          return (
-            "<tr>" +
-              '<td class="table-name">' + escapeHtml(record.clientName) + "</td>" +
-              "<td>" + escapeHtml(record.contactNumber) + "</td>" +
-              "<td>" + escapeHtml(record.address) + "</td>" +
-              "<td>" + escapeHtml(record.state) + "</td>" +
-              "<td>" + escapeHtml(record.city) + "</td>" +
-              "<td>" + escapeHtml(record.pinCode) + "</td>" +
-              '<td><button class="delete-btn" type="button" data-delete-id="' + escapeHtml(record.id) + '">Delete</button></td>' +
-            "</tr>"
-          );
-        }).join("");
-
-        mobileList.innerHTML = filteredRecords.map(buildRecordHtml).join("");
-      }
-
-      function deleteRecord(id) {
-        var nextRecords = records.filter(function (record) {
-          return record.id !== id;
-        });
-
-        if (nextRecords.length === records.length) {
-          return;
-        }
-
-        records = nextRecords;
-        saveRecords();
-        renderRecords();
-        setStatus("Client record deleted.");
-      }
-
-      form.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        var data = getFormData();
-        var values = Object.keys(data).map(function (key) {
-          return data[key];
-        });
-
-        if (values.some(function (value) { return !value; })) {
-          setStatus("Please enter all client details before saving.");
-          return;
-        }
-
-        records.unshift({
-          id: String(Date.now()),
-          createdAt: new Date().toISOString(),
-          clientName: data.clientName,
-          contactNumber: data.contactNumber,
-          address: data.address,
-          state: data.state,
-          city: data.city,
-          pinCode: data.pinCode
-        });
-
-        saveRecords();
-        renderRecords();
-        resetForm();
-        setStatus("Client saved for future reference.");
-      });
-
-      document.getElementById("clearFormBtn").addEventListener("click", function () {
-        resetForm();
-        setStatus("Form cleared. Ready for the next client.");
-      });
-
-      document.getElementById("clearAllBtn").addEventListener("click", function () {
-        if (!records.length) {
-          setStatus("There are no client records to clear.");
-          return;
-        }
-
-        if (!window.confirm("Clear all saved client records?")) {
-          return;
-        }
-
-        records = [];
-        saveRecords();
-        renderRecords();
-        setStatus("All client records cleared.");
-      });
-
-      searchInput.addEventListener("input", renderRecords);
-      stateSelect.addEventListener("change", function () {
-        loadCities(stateSelect.value, "");
-      });
-      citySelect.addEventListener("change", toggleManualCity);
-
-      document.addEventListener("click", function (event) {
-        var target = event.target;
-        if (target && target.getAttribute("data-delete-id")) {
-          deleteRecord(target.getAttribute("data-delete-id"));
-        }
-      });
-
-      document.getElementById("storageKeyLabel").textContent = STORAGE_KEY;
-      populateStates();
-      loadCities("", "");
-      loadRecords();
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(() => {
       renderRecords();
-    }());
-  <script>
+    }, 120);
+  });
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var data = {
+      id: Date.now().toString(),
+      clientName: cleanText(clientName.value),
+      contactNumber: cleanText(contactNumber.value),
+      address: cleanText(address.value),
+      state: cleanText(stateSelect.value),
+      city: cleanText(citySelect.value),
+      pinCode: cleanText(pinCode.value)
+    };
+
+    records.unshift(data);
+    saveRecords();
+    renderRecords();
+    form.reset();
+  });
+
+  document.addEventListener("click", function (e) {
+    if (e.target.dataset.id) {
+      records = records.filter(r => r.id !== e.target.dataset.id);
+      saveRecords();
+      renderRecords();
+    }
+  });
+
+  loadRecords();
+  renderRecords();
+})();
+</script>
+
+<!-- ✅ FIXED SERVICE WORKER -->
+<script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
-<script>
+</script>
 let typingTimer;
 
 function handleInput(e) {
