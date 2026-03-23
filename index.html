@@ -56,6 +56,7 @@
       font-family: "Segoe UI", Tahoma, sans-serif;
       background: var(--shell);
       color: var(--body);
+      -webkit-text-size-adjust: 100%;
     }
 
     body {
@@ -739,6 +740,93 @@
       border: 0;
     }
 
+    body.typing-active .app-shell::before,
+    body.typing-active .app-shell::after,
+    body.typing-active .watermark-sparkles::before,
+    body.typing-active .watermark-sparkles::after,
+    body.typing-active .logo-panel::after,
+    body.typing-active .logo-panel .logo-sparkle,
+    body.typing-active .logo-panel img {
+      animation: none !important;
+    }
+
+    body.typing-active .app-shell::before {
+      opacity: 0.1;
+      filter: none;
+    }
+
+    body.typing-active .app-shell::after {
+      opacity: 0.14;
+      filter: blur(10px);
+    }
+
+    body.typing-active .watermark-sparkles::before,
+    body.typing-active .watermark-sparkles::after,
+    body.typing-active .logo-panel::after,
+    body.typing-active .logo-panel .logo-sparkle {
+      opacity: 0;
+    }
+
+    body.typing-active .logo-panel img {
+      filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+    }
+
+    @media (max-width: 719px), (hover: none) and (pointer: coarse) {
+      .app-shell::before,
+      .app-shell::after,
+      .watermark-sparkles::before,
+      .watermark-sparkles::after,
+      .logo-panel::after,
+      .logo-panel .logo-sparkle,
+      .logo-panel img {
+        animation: none;
+      }
+
+      .app-shell::before {
+        width: min(82vw, 560px);
+        height: min(82vw, 560px);
+        opacity: 0.12;
+        filter:
+          saturate(1.08)
+          brightness(1.02)
+          contrast(1.02)
+          drop-shadow(0 0 18px rgba(185, 133, 34, 0.22));
+      }
+
+      .app-shell::after {
+        width: min(92vw, 640px);
+        height: min(92vw, 640px);
+        opacity: 0.3;
+        filter: blur(12px);
+      }
+
+      .watermark-sparkles {
+        display: none;
+      }
+
+      .logo-panel::before {
+        filter: blur(9px);
+      }
+
+      .logo-panel::after,
+      .logo-panel .logo-sparkle {
+        opacity: 0;
+      }
+
+      .logo-panel img {
+        filter:
+          drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18))
+          drop-shadow(0 0 14px rgba(215, 167, 80, 0.22));
+      }
+
+      .field input,
+      .field select,
+      .field textarea,
+      .search-box input {
+        font-size: 16px;
+      }
+    }
+
     @media (min-width: 720px) {
       .header {
         padding: 1.4rem 1.5rem 1.7rem;
@@ -988,6 +1076,7 @@
   <script>
 (function () {
   var STORAGE_KEY = "KapsVision.clients.web";
+  var MOBILE_INPUT_MEDIA_QUERY = "(max-width: 719px), (hover: none) and (pointer: coarse)";
   var cityStateMap = window.KAPSVISION_INDIA_LOCATIONS || {};
   var records = [];
 
@@ -999,9 +1088,70 @@
   var stateSelect = document.getElementById("state");
   var citySelect = document.getElementById("city");
   var cityManual = document.getElementById("cityManual");
+  var clientNameInput = document.getElementById("clientName");
+  var contactNumberInput = document.getElementById("contactNumber");
+  var addressInput = document.getElementById("address");
+  var pinCodeInput = document.getElementById("pinCode");
 
   function cleanText(value) {
     return String(value || "").trim();
+  }
+
+  function buildSearchText(record) {
+    return [
+      cleanText(record.clientName),
+      cleanText(record.contactNumber),
+      cleanText(record.address),
+      cleanText(record.state),
+      cleanText(record.city),
+      cleanText(record.pinCode)
+    ].join(" ").toLowerCase();
+  }
+
+  function prepareRecord(record) {
+    var prepared = {
+      id: record && record.id ? String(record.id) : Date.now().toString(),
+      clientName: cleanText(record && record.clientName),
+      contactNumber: cleanText(record && record.contactNumber),
+      address: cleanText(record && record.address),
+      state: cleanText(record && record.state),
+      city: cleanText(record && record.city),
+      pinCode: cleanText(record && record.pinCode)
+    };
+
+    prepared.searchText = buildSearchText(prepared);
+    return prepared;
+  }
+
+  function serializeRecord(record) {
+    return {
+      id: record.id,
+      clientName: record.clientName,
+      contactNumber: record.contactNumber,
+      address: record.address,
+      state: record.state,
+      city: record.city,
+      pinCode: record.pinCode
+    };
+  }
+
+  function isFormField(element) {
+    if (!element || !element.tagName) return false;
+    var tagName = element.tagName;
+    return tagName === "INPUT" || tagName === "TEXTAREA" || tagName === "SELECT";
+  }
+
+  function isMobileInputMode() {
+    return window.matchMedia(MOBILE_INPUT_MEDIA_QUERY).matches;
+  }
+
+  function updateTypingMode(isTyping) {
+    if (!isMobileInputMode()) {
+      document.body.classList.remove("typing-active");
+      return;
+    }
+
+    document.body.classList.toggle("typing-active", Boolean(isTyping));
   }
 
   function setStatus(message) {
@@ -1009,7 +1159,7 @@
   }
 
   function saveRecords() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(records.map(serializeRecord)));
   }
 
   function loadRecords() {
@@ -1017,19 +1167,20 @@
       var saved = localStorage.getItem(STORAGE_KEY);
       records = saved ? JSON.parse(saved) : [];
       if (!Array.isArray(records)) records = [];
+      records = records.map(prepareRecord);
     } catch {
       records = [];
     }
   }
 
-  function renderRecords() {
-    var query = cleanText(searchInput.value).toLowerCase();
+  function renderRecords(queryValue) {
+    var query = cleanText(
+      typeof queryValue === "string" ? queryValue : searchInput.value
+    ).toLowerCase();
 
     var filtered = records.filter(function (r) {
       if (!query) return true;
-      return (r.clientName + r.contactNumber + r.address + r.state + r.city + r.pinCode)
-        .toLowerCase()
-        .includes(query);
+      return r.searchText.includes(query);
     });
 
     if (!filtered.length) {
@@ -1051,7 +1202,7 @@
     `).join("");
 
     mobileList.innerHTML = filtered.map(r => `
-      <div>
+      <div class="record-card">
         <b>${r.clientName}</b><br>
         ${r.contactNumber}<br>
         ${r.city}, ${r.state}
@@ -1060,35 +1211,33 @@
   }
 
   // ✅ FIXED SEARCH (NO LAG)
-  let searchTimer;
-  let lastSearch = "";
+  var searchTimer = 0;
+  var lastSearch = cleanText(searchInput.value).toLowerCase();
 
   searchInput.addEventListener("input", function (e) {
-    const value = e.target.value;
+    var value = cleanText(e.target.value).toLowerCase();
 
     if (value === lastSearch) return;
     lastSearch = value;
 
-    requestAnimationFrame(() => {});
-
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => {
-      renderRecords();
-    }, 120);
+    searchTimer = window.setTimeout(function () {
+      renderRecords(value);
+    }, value ? 70 : 0);
   });
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    var data = {
+    var data = prepareRecord({
       id: Date.now().toString(),
-      clientName: cleanText(clientName.value),
-      contactNumber: cleanText(contactNumber.value),
-      address: cleanText(address.value),
+      clientName: cleanText(clientNameInput.value),
+      contactNumber: cleanText(contactNumberInput.value),
+      address: cleanText(addressInput.value),
       state: cleanText(stateSelect.value),
       city: cleanText(citySelect.value),
-      pinCode: cleanText(pinCode.value)
-    };
+      pinCode: cleanText(pinCodeInput.value)
+    });
 
     records.unshift(data);
     saveRecords();
@@ -1104,6 +1253,26 @@
     }
   });
 
+  document.addEventListener("focusin", function (e) {
+    if (isFormField(e.target)) {
+      updateTypingMode(true);
+    }
+  });
+
+  document.addEventListener("focusout", function (e) {
+    if (!isFormField(e.target)) return;
+
+    window.setTimeout(function () {
+      updateTypingMode(isFormField(document.activeElement));
+    }, 0);
+  });
+
+  window.addEventListener("resize", function () {
+    if (!isMobileInputMode()) {
+      updateTypingMode(false);
+    }
+  });
+
   loadRecords();
   renderRecords();
 })();
@@ -1113,18 +1282,6 @@
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
-}
-</script>
-let typingTimer;
-
-function handleInput(e) {
-  clearTimeout(typingTimer);
-
-  typingTimer = setTimeout(() => {
-    console.log("Typing stopped:", e.value);
-
-    // Example: save, search, render
-  }, 300);
 }
 </script>
 
