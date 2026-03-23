@@ -4,7 +4,7 @@ const FILES_TO_CACHE = [
   "/",
   "/index.html",
   "/manifest.json",
-  "/images/logo-180.png"
+  "/images/logo.png"
 ];
 
 // Install
