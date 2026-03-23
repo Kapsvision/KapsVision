@@ -1055,16 +1055,17 @@
           <div class="desktop-table">
             <table>
               <thead>
-                <tr>
-                  <th style="width: 16%;">Name</th>
-                  <th style="width: 14%;">Contact</th>
-                  <th style="width: 28%;">Address</th>
-                  <th style="width: 12%;">State</th>
-                  <th style="width: 12%;">City</th>
-                  <th style="width: 10%;">Pin</th>
-                  <th style="width: 8%;">Action</th>
-                </tr>
-              </thead>
+  		<tr>
+    		<th style="width: 6%;">Sr. No</th>
+    		<th style="width: 16%;">Client Name</th>
+    		<th style="width: 14%;">Contact</th>
+    		<th style="width: 28%;">Address</th>
+    		<th style="width: 12%;">City</th>
+   		<th style="width: 12%;">State</th>
+    		<th style="width: 10%;">Pincode</th>
+    		<th style="width: 8%;">Action</th>
+  		</tr>
+	     </thead>
               <tbody id="desktopTableBody"></tbody>
             </table>
           </div>
@@ -1229,23 +1230,25 @@ function populateStates() {
       return;
     }
 
-    desktopTableBody.innerHTML = filtered.map(r => `
-      <tr>
-        <td>${r.clientName}</td>
-        <td>${r.contactNumber}</td>
-        <td>${r.address}</td>
-        <td>${r.state}</td>
-        <td>${r.city}</td>
-        <td>${r.pinCode}</td>
-        <td><button data-id="${r.id}">Delete</button></td>
-      </tr>
+    desktopTableBody.innerHTML = filtered.map((r, index) => `
+     <tr>
+    	<td>${index + 1}</td>
+    	<td>${r.clientName}</td>
+    	<td>${r.contactNumber}</td>
+    	<td>${r.address}</td>
+    	<td>${r.city}</td>
+    	<td>${r.state}</td>
+    	<td>${r.pinCode}</td>
+	<td><button data-id="${r.id}">Delete</button></td>
+     </tr>
     `).join("");
 
-    mobileList.innerHTML = filtered.map(r => `
+    mobileList.innerHTML = filtered.map((r, index) => `
       <div class="record-card">
-        <b>${r.clientName}</b><br>
-        ${r.contactNumber}<br>
-        ${r.city}, ${r.state}
+    	<b>${index + 1}. ${r.clientName}</b><br>
+    	📞 ${r.contactNumber}<br>
+    	📍 ${r.address}<br>
+    	${r.city}, ${r.state} - ${r.pinCode}
       </div>
     `).join("");
   }
